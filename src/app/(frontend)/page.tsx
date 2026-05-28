@@ -1,0 +1,211 @@
+import Image from 'next/image'
+import Link from 'next/link'
+import { Lightbulb, TrendingUp } from 'lucide-react'
+
+import { ArticleCard, SectionHeading } from '@/components/article/ArticleCard'
+import { CategoriesGrid } from '@/components/category/CategoriesGrid'
+import { AdPlaceholder } from '@/components/ui/AdPlaceholder'
+import { getAllCategories } from '@/lib/categories'
+import { getPayloadClient } from '@/lib/payload'
+
+export default async function HomePage() {
+  const payload = await getPayloadClient()
+  const categories = await getAllCategories()
+
+  const { docs: articles } = await payload.find({
+    collection: 'articles',
+    depth: 1,
+    limit: 6,
+    sort: '-publishedAt',
+    where: {
+      _status: {
+        equals: 'published',
+      },
+    },
+  })
+
+  const featured = articles[0]
+  const secondary = articles.slice(1, 3)
+  const latest = articles.slice(0, 4)
+
+  return (
+    <main className="mx-auto flex w-full max-w-container-max flex-grow flex-col gap-ad-clearance px-margin-mobile py-ad-clearance md:px-margin-desktop">
+      <section className="relative grid min-h-[560px] grid-cols-1 items-center gap-gutter overflow-hidden rounded-2xl border border-outline-variant bg-money-gradient p-8 md:p-12 lg:grid-cols-12">
+        <div className="pointer-events-none absolute inset-0 bg-hero-glow" aria-hidden />
+        <div className="relative z-10 flex flex-col gap-6 lg:col-span-7">
+          <span className="inline-flex w-fit items-center rounded-full border border-secondary/30 bg-accent-muted px-4 py-1.5 font-label-md text-label-md text-secondary">
+            How to Make Money
+          </span>
+          <h1 className="font-display-lg text-display-lg text-on-surface">
+            Real Ways to Earn More — Side Hustles, Online Income & Investing
+          </h1>
+          <p className="max-w-2xl font-body-lg text-body-lg leading-relaxed text-on-surface-variant">
+            Step-by-step playbooks to start earning today: freelancing, content monetization,
+            e-commerce, digital products, and building passive income streams that actually work.
+          </p>
+          <div className="flex flex-wrap gap-4 pt-4">
+            <Link
+              className="rounded-DEFAULT bg-primary px-8 py-4 font-label-md text-label-md text-on-primary shadow-sm transition-all hover:bg-surface-tint hover:shadow-md"
+              href="/categories"
+            >
+              Start Making Money
+            </Link>
+            <Link
+              className="rounded-DEFAULT border border-secondary bg-transparent px-8 py-4 font-label-md text-label-md text-secondary transition-all hover:bg-secondary-container"
+              href={latest[0] ? `/articles/${latest[0].slug}` : '/categories'}
+            >
+              Latest Guides
+            </Link>
+          </div>
+        </div>
+        <div className="relative z-10 min-h-[320px] lg:col-span-5 lg:min-h-[400px]">
+          <div className="absolute inset-0 overflow-hidden rounded-xl border border-primary/20 bg-surface-container-low shadow-sm">
+            <Image
+              alt="High key minimalist architectural workspace"
+              className="h-full w-full object-cover opacity-80 mix-blend-multiply"
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 40vw"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcrBhnnIMzKlEDl5tz6rNwLgivMJQb5xBWRPxNECHht2JxUDT8DOL1th0wTOb9AicWRqqMLKOlL38HegiuIojbZ9K9y6ZJfGLl8XCaLpGi5INZxqlW0F8ud5CeA9FfFdEAxV-92nW20EIsScaPLO5AUEjFb5taAsWqMb-y63pfQN-M7uuAP2FvwAM8ZGF02MnshpoGMjt2iQrDgs42iqs6HEr5hTRc1N-F1vG011kmRAVaP4BXowWgncJ5IeqEnwlTs2WDL04NICs"
+            />
+          </div>
+        </div>
+      </section>
+
+      <AdPlaceholder className="h-[90px] w-full" label="Leaderboard Ad Space" />
+
+      <section className="flex flex-col gap-8">
+        <SectionHeading href="/categories" title="Explore Categories" />
+        <CategoriesGrid categories={categories} />
+      </section>
+
+      <section className="flex flex-col gap-8">
+        <SectionHeading title="Featured Insights" />
+        <div className="grid auto-rows-[250px] grid-cols-1 gap-6 md:grid-cols-3">
+          {featured ? (
+            <ArticleCard
+              categoryName={
+                featured.category && typeof featured.category === 'object'
+                  ? featured.category.name
+                  : null
+              }
+              excerpt={featured.excerpt}
+              imageUrl={
+                featured.featuredImage && typeof featured.featuredImage === 'object'
+                  ? featured.featuredImage.url
+                  : null
+              }
+              slug={featured.slug}
+              title={featured.title}
+              variant="featured"
+            />
+          ) : (
+            <div className="col-span-2 row-span-2 flex items-center justify-center rounded-xl border border-dashed border-tertiary bg-surface-container-low p-8 font-body-md text-body-md text-on-surface-variant">
+              Publish your first article in the admin panel to populate featured content.
+            </div>
+          )}
+
+          {secondary.length > 0 ? (
+            secondary.map((article, index) => (
+              <ArticleCard
+                key={article.id}
+                categoryName={
+                  article.category && typeof article.category === 'object'
+                    ? article.category.name
+                    : index === 0
+                      ? 'Investment'
+                      : 'Side Hustles'
+                }
+                slug={article.slug}
+                title={article.title}
+                variant="compact"
+              />
+            ))
+          ) : (
+            <>
+              <div className="flex flex-col justify-between rounded-xl border border-tertiary bg-surface-container-lowest p-6">
+                <TrendingUp className="mb-4 h-8 w-8 text-primary" />
+                <div>
+                  <span className="mb-1 block font-label-md text-label-md text-tertiary">
+                    Investment
+                  </span>
+                  <h4 className="font-headline-md text-body-lg font-semibold text-on-surface">
+                    Index Funds vs. Real Estate in 2024
+                  </h4>
+                </div>
+              </div>
+              <div className="flex flex-col justify-between rounded-xl border border-tertiary bg-surface-container-lowest p-6">
+                <Lightbulb className="mb-4 h-8 w-8 text-primary" />
+                <div>
+                  <span className="mb-1 block font-label-md text-label-md text-tertiary">
+                    Side Hustles
+                  </span>
+                  <h4 className="font-headline-md text-body-lg font-semibold text-on-surface">
+                    High-Yield Digital Products
+                  </h4>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+
+      <section className="mt-12 grid grid-cols-1 gap-gutter lg:grid-cols-12">
+        <div className="flex flex-col gap-8 lg:col-span-8">
+          <div className="flex flex-col items-center gap-8 rounded-xl border border-tertiary bg-surface-container-low p-10 md:flex-row">
+            <div className="flex-1">
+              <h3 className="mb-4 font-headline-md text-headline-md text-on-surface">
+                Money Moves Newsletter
+              </h3>
+              <p className="mb-6 font-body-md text-body-md text-on-surface-variant">
+                Weekly income ideas, side hustle breakdowns, and investing tips — straight to your
+                inbox.
+              </p>
+              <form className="flex w-full max-w-md gap-2">
+                <input
+                  className="flex-1 rounded-DEFAULT border border-tertiary bg-surface px-4 py-3 font-body-md text-body-md focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                  placeholder="Enter your email"
+                  type="email"
+                />
+                <button
+                  className="rounded-DEFAULT bg-primary px-6 py-3 font-label-md text-label-md text-on-primary transition-colors hover:bg-surface-tint"
+                  type="button"
+                >
+                  Subscribe
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <h3 className="mb-2 border-b border-outline-variant pb-4 font-headline-md text-headline-md text-on-surface">
+              Latest Money Guides
+            </h3>
+            {latest.length > 0 ? (
+              latest.map((article) => (
+                <ArticleCard
+                  key={article.id}
+                  excerpt={article.excerpt}
+                  publishedAt={article.publishedAt}
+                  slug={article.slug}
+                  title={article.title}
+                />
+              ))
+            ) : (
+              <p className="font-body-md text-body-md text-on-surface-variant">
+                No published articles yet. Create one via the admin panel or API.
+              </p>
+            )}
+          </div>
+        </div>
+
+        <aside className="flex flex-col gap-8 lg:col-span-4">
+          <AdPlaceholder
+            className="sticky top-28 h-[600px] w-full"
+            label="Sidebar Ad Space"
+          />
+        </aside>
+      </section>
+    </main>
+  )
+}

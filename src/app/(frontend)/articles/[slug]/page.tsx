@@ -1,0 +1,139 @@
+import type { Metadata } from 'next'
+import Image from 'next/image'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+
+import { ArticleContent } from '@/components/article/ArticleContent'
+import { CommentForm } from '@/components/comment/CommentForm'
+import { CommentList } from '@/components/comment/CommentList'
+import { AdPlaceholder } from '@/components/ui/AdPlaceholder'
+import { formatDate, getMediaUrl, getPayloadClient } from '@/lib/payload'
+
+type PageProps = {
+  params: Promise<{ slug: string }>
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'articles',
+    limit: 1,
+    where: { slug: { equals: slug } },
+  })
+
+  const article = docs[0]
+  if (!article) return { title: 'Article Not Found' }
+
+  return {
+    title: article.title,
+    description: article.excerpt,
+  }
+}
+
+export default async function ArticleDetailPage({ params }: PageProps) {
+  const { slug } = await params
+  const payload = await getPayloadClient()
+
+  const { docs } = await payload.find({
+    collection: 'articles',
+    depth: 2,
+    limit: 1,
+    where: {
+      and: [{ slug: { equals: slug } }, { _status: { equals: 'published' } }],
+    },
+  })
+
+  const article = docs[0]
+  if (!article) notFound()
+
+  const { docs: comments } = await payload.find({
+    collection: 'comments',
+    limit: 50,
+    sort: '-createdAt',
+    where: {
+      and: [
+        { article: { equals: article.id } },
+        { status: { equals: 'approved' } },
+      ],
+    },
+  })
+
+  const heroImage =
+    article.featuredImage && typeof article.featuredImage === 'object'
+      ? getMediaUrl(article.featuredImage.url)
+      : null
+
+  return (
+    <main className="mx-auto flex w-full max-w-container-max flex-grow flex-col gap-ad-clearance px-margin-mobile py-ad-clearance md:px-margin-desktop">
+      <article className="grid grid-cols-1 gap-gutter lg:grid-cols-12">
+        <div className="flex flex-col gap-6 lg:col-span-8">
+          <div className="flex flex-wrap items-center gap-3 font-label-md text-label-md text-tertiary">
+            {article.category && typeof article.category === 'object' && (
+              <Link className="text-primary hover:text-surface-tint" href={`/category/${article.category.slug}`}>
+                {article.category.name}
+              </Link>
+            )}
+            <span>{formatDate(article.publishedAt)}</span>
+          </div>
+
+          <h1 className="font-display-lg text-headline-lg-mobile md:text-display-lg text-on-surface">
+            {article.title}
+          </h1>
+
+          <p className="font-body-lg text-body-lg text-on-surface-variant">{article.excerpt}</p>
+
+          {heroImage && (
+            <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-tertiary">
+              <Image
+                alt={article.title}
+                className="object-cover"
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 66vw"
+                src={heroImage}
+              />
+            </div>
+          )}
+
+          <AdPlaceholder className="h-[90px] w-full" label="In-Article Ad Space" />
+
+          <ArticleContent content={article.content} />
+
+          {Array.isArray(article.topics) && article.topics.length > 0 && (
+            <div className="flex flex-wrap gap-2 border-t border-outline-variant pt-6">
+              {article.topics.map((topic) =>
+                topic && typeof topic === 'object' ? (
+                  <Link
+                    key={topic.id}
+                    className="rounded-full border border-tertiary px-4 py-2 font-label-md text-label-md text-primary transition-colors hover:bg-surface-container-low"
+                    href={`/topic/${topic.slug}`}
+                  >
+                    {topic.name}
+                  </Link>
+                ) : null,
+              )}
+            </div>
+          )}
+
+          <section className="flex flex-col gap-6 border-t border-outline-variant pt-10">
+            <h2 className="font-headline-md text-headline-md text-on-surface">Comments</h2>
+            <CommentList
+              comments={comments.map((comment) => ({
+                id: comment.id,
+                authorName: comment.authorName,
+                content: comment.content,
+                createdAt: comment.createdAt,
+              }))}
+            />
+            <CommentForm articleId={article.id} />
+          </section>
+        </div>
+
+        <aside className="lg:col-span-4">
+          <AdPlaceholder className="sticky top-28 h-[600px] w-full" label="Sidebar Ad Space" />
+        </aside>
+      </article>
+    </main>
+  )
+}

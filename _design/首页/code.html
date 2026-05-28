@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MMHow - Strategic Wealth Strategies</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-tint": "#355f97",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#c1c7cf",
+                        "on-tertiary-fixed-variant": "#41474e",
+                        "secondary-fixed-dim": "#b9c8de",
+                        "surface-variant": "#d8e3fb",
+                        "tertiary-container": "#6f757c",
+                        "on-tertiary-container": "#fcfcff",
+                        "primary-fixed": "#d5e3ff",
+                        "on-secondary-fixed-variant": "#39485a",
+                        "background": "#f9f9ff",
+                        "on-surface": "#111c2d",
+                        "on-surface-variant": "#434750",
+                        "secondary-fixed": "#d4e4fa",
+                        "primary-fixed-dim": "#a6c8ff",
+                        "outline-variant": "#c3c6d1",
+                        "surface": "#f9f9ff",
+                        "on-tertiary": "#ffffff",
+                        "primary-container": "#4d76af",
+                        "tertiary": "#565d63",
+                        "inverse-on-surface": "#ecf1ff",
+                        "surface-bright": "#f9f9ff",
+                        "inverse-primary": "#a6c8ff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#263143",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#161c22",
+                        "surface-container-high": "#dee8ff",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#fefcff",
+                        "on-primary-fixed-variant": "#18477e",
+                        "on-background": "#111c2d",
+                        "outline": "#737781",
+                        "on-secondary-fixed": "#0d1c2d",
+                        "secondary": "#516072",
+                        "surface-container": "#e7eeff",
+                        "on-primary-fixed": "#001c3b",
+                        "primary": "#335d94",
+                        "surface-dim": "#cfdaf2",
+                        "tertiary-fixed": "#dde3eb",
+                        "on-secondary-container": "#556477",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#d2e1f7",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#d8e3fb",
+                        "surface-container-low": "#f0f3ff",
+                        "on-secondary": "#ffffff"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    spacing: {
+                        "ad-clearance": "48px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "64px",
+                        "base": "8px"
+                    },
+                    fontFamily: {
+                        "headline-lg-mobile": ["Source Serif 4"],
+                        "body-lg": ["Source Sans 3"],
+                        "body-md": ["Source Sans 3"],
+                        "headline-md": ["Source Serif 4"],
+                        "label-md": ["Source Sans 3"],
+                        "display-lg": ["Source Serif 4"],
+                        "headline-lg": ["Source Serif 4"]
+                    },
+                    fontSize: {
+                        "headline-lg-mobile": ["28px", { lineHeight: "1.2", fontWeight: "600" }],
+                        "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "400" }],
+                        "body-md": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+                        "headline-md": ["24px", { lineHeight: "1.3", fontWeight: "600" }],
+                        "label-md": ["14px", { lineHeight: "1", letterSpacing: "0.05em", fontWeight: "600" }],
+                        "display-lg": ["48px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "headline-lg": ["32px", { lineHeight: "1.2", fontWeight: "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+        /* Custom styles for high-key aesthetic */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.5); /* subtle tertiary border */
+        }
+        .ad-placeholder {
+            background: repeating-linear-gradient(
+                45deg,
+                #f9f9ff,
+                #f9f9ff 10px,
+                #f0f3ff 10px,
+                #f0f3ff 20px
+            );
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline sticky top-0 z-50 flex justify-between items-center w-full px-margin-desktop max-w-[1200px] mx-auto h-20 transition-all">
+<div class="flex items-center gap-gutter">
+<a class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed" href="#">MMHow</a>
+<nav class="hidden md:flex items-center gap-6 ml-8">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors text-label-md font-label-md hover:bg-surface-container-low dark:hover:bg-surface-container-high px-3 py-2 rounded-DEFAULT" href="#">Side Hustles</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors text-label-md font-label-md hover:bg-surface-container-low dark:hover:bg-surface-container-high px-3 py-2 rounded-DEFAULT" href="#">Investment</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors text-label-md font-label-md hover:bg-surface-container-low dark:hover:bg-surface-container-high px-3 py-2 rounded-DEFAULT" href="#">Remote Work</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors text-label-md font-label-md hover:bg-surface-container-low dark:hover:bg-surface-container-high px-3 py-2 rounded-DEFAULT" href="#">Guides</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex relative text-on-surface-variant">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-2 border border-tertiary rounded-DEFAULT bg-surface text-body-md font-body-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary w-64" placeholder="Search..." type="text"/>
+</div>
+<a class="text-on-surface-variant hover:text-primary text-label-md font-label-md px-4 py-2" href="#">Login</a>
+<a class="bg-primary text-on-primary hover:bg-surface-tint text-label-md font-label-md px-6 py-2.5 rounded-DEFAULT transition-colors" href="#">Start Earning</a>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop py-ad-clearance flex flex-col gap-ad-clearance">
+<!-- Hero Section: High-Key Asymmetric -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center min-h-[614px]">
+<div class="lg:col-span-7 flex flex-col gap-6 relative z-10">
+<h1 class="text-display-lg font-display-lg text-on-surface">Strategic Wealth Strategies for the Modern Side-Hustler</h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
+                    Discover actionable blueprints for remote income, sophisticated investment insights, and sustainable wealth building in a pristine, distraction-free environment.
+                </p>
+<div class="flex flex-wrap gap-4 pt-4">
+<button class="bg-primary text-on-primary hover:bg-surface-tint text-label-md font-label-md px-8 py-4 rounded-DEFAULT transition-all shadow-sm hover:shadow-md">Explore Blueprints</button>
+<button class="bg-transparent border border-primary text-primary hover:bg-surface-container-low text-label-md font-label-md px-8 py-4 rounded-DEFAULT transition-all">Read Latest Guides</button>
+</div>
+</div>
+<div class="lg:col-span-5 relative h-full min-h-[400px]">
+<!-- Abstract visual placeholder representing wealth/growth in a high-key setting -->
+<div class="absolute inset-0 bg-surface-container-low rounded-xl border border-tertiary overflow-hidden">
+<img alt="High key minimalist architectural workspace" class="w-full h-full object-cover opacity-80 mix-blend-multiply" data-alt="A pristine, minimalist modern home office bathed in bright, diffused natural light. The scene features a clean white desk, subtle metallic accents, and a highly analytical yet serene atmosphere. The color palette is predominantly white and light grey, with subtle hints of airy blue, creating a high-key, trustworthy financial aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcrBhnnIMzKlEDl5tz6rNwLgivMJQb5xBWRPxNECHht2JxUDT8DOL1th0wTOb9AicWRqqMLKOlL38HegiuIojbZ9K9y6ZJfGLl8XCaLpGi5INZxqlW0F8ud5CeA9FfFdEAxV-92nW20EIsScaPLO5AUEjFb5taAsWqMb-y63pfQN-M7uuAP2FvwAM8ZGF02MnshpoGMjt2iQrDgs42iqs6HEr5hTRc1N-F1vG011kmRAVaP4BXowWgncJ5IeqEnwlTs2WDL04NICs"/>
+</div>
+</div>
+</section>
+<!-- Ad Placeholder Top -->
+<div class="w-full h-[90px] border border-tertiary rounded-DEFAULT ad-placeholder flex items-center justify-center relative">
+<span class="text-label-md font-label-md text-outline uppercase tracking-wider absolute top-2 left-2 text-[10px]">Advertisement</span>
+<span class="text-body-md font-body-md text-tertiary-container">Leaderboard Ad Space</span>
+</div>
+<!-- Featured Insights Bento Grid -->
+<section class="flex flex-col gap-8">
+<div class="flex justify-between items-end border-b border-outline-variant pb-4">
+<h2 class="text-headline-lg md:text-headline-lg font-headline-lg text-on-surface">Featured Insights</h2>
+<a class="text-primary hover:text-surface-tint text-label-md font-label-md flex items-center gap-1 group transition-colors" href="#">
+                    View All <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[250px]">
+<!-- Large Card -->
+<div class="md:col-span-2 md:row-span-2 relative rounded-xl border border-tertiary bg-surface-container-lowest overflow-hidden group hover:shadow-[0_4px_20px_rgba(0,0,0,0.04)] transition-shadow">
+<div class="absolute inset-0 p-8 flex flex-col justify-end z-10 bg-gradient-to-t from-surface via-surface/80 to-transparent">
+<span class="text-primary font-label-md text-label-md mb-2 tracking-widest uppercase">Deep Dive</span>
+<h3 class="text-headline-md font-headline-md text-on-surface mb-3 group-hover:text-primary transition-colors">The Remote Work Arbitrage: Leveraging Global Markets</h3>
+<p class="text-body-md font-body-md text-on-surface-variant max-w-lg">How top earners are utilizing geographical arbitrage to maximize their remote income streams while maintaining a high-key lifestyle.</p>
+</div>
+</div>
+<!-- Small Card 1 -->
+<div class="rounded-xl border border-tertiary bg-surface-container-lowest p-6 flex flex-col justify-between hover:shadow-[0_4px_20px_rgba(0,0,0,0.04)] transition-shadow">
+<span class="material-symbols-outlined text-primary text-3xl mb-4" data-weight="fill">trending_up</span>
+<div>
+<span class="text-tertiary font-label-md text-label-md mb-1 block">Investment</span>
+<h4 class="text-body-lg font-headline-md font-semibold text-on-surface">Index Funds vs. Real Estate in 2024</h4>
+</div>
+</div>
+<!-- Small Card 2 -->
+<div class="rounded-xl border border-tertiary bg-surface-container-lowest p-6 flex flex-col justify-between hover:shadow-[0_4px_20px_rgba(0,0,0,0.04)] transition-shadow">
+<span class="material-symbols-outlined text-primary text-3xl mb-4" data-weight="fill">lightbulb</span>
+<div>
+<span class="text-tertiary font-label-md text-label-md mb-1 block">Side Hustles</span>
+<h4 class="text-body-lg font-headline-md font-semibold text-on-surface">High-Yield Digital Products</h4>
+</div>
+</div>
+</div>
+</section>
+<!-- Newsletter & Sidebar Layout -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter mt-12">
+<!-- Main Content Area -->
+<div class="lg:col-span-8 flex flex-col gap-8">
+<div class="bg-surface-container-low rounded-xl border border-tertiary p-10 flex flex-col md:flex-row items-center gap-8">
+<div class="flex-1">
+<h3 class="text-headline-md font-headline-md text-on-surface mb-4">The Strategic Newsletter</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mb-6">Join 50,000+ modern professionals receiving weekly, high-signal blueprints on wealth accumulation and remote strategy.</p>
+<form class="flex gap-2 w-full max-w-md">
+<input class="flex-1 px-4 py-3 border border-tertiary rounded-DEFAULT bg-surface text-body-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" placeholder="Enter your email" type="email"/>
+<button class="bg-primary text-on-primary px-6 py-3 rounded-DEFAULT text-label-md font-label-md hover:bg-surface-tint transition-colors" type="submit">Subscribe</button>
+</form>
+</div>
+</div>
+<!-- Latest Articles List -->
+<div class="flex flex-col gap-4">
+<h3 class="text-headline-md font-headline-md text-on-surface border-b border-outline-variant pb-4 mb-2">Latest Strategies</h3>
+<article class="flex gap-6 items-start py-4 border-b border-[#F1F5F9] group cursor-pointer">
+<div class="text-tertiary font-label-md text-label-md pt-1 w-24 shrink-0">Mar 15</div>
+<div>
+<h4 class="text-body-lg font-headline-md font-semibold text-on-surface group-hover:text-primary transition-colors mb-2">Structuring Your LLC for Remote Consulting</h4>
+<p class="text-body-md font-body-md text-on-surface-variant line-clamp-2">A pristine guide to the tax implications and legal structuring necessary when building a high-ticket consulting business from anywhere.</p>
+</div>
+</article>
+<article class="flex gap-6 items-start py-4 border-b border-[#F1F5F9] group cursor-pointer">
+<div class="text-tertiary font-label-md text-label-md pt-1 w-24 shrink-0">Mar 12</div>
+<div>
+<h4 class="text-body-lg font-headline-md font-semibold text-on-surface group-hover:text-primary transition-colors mb-2">The Minimalist Investment Portfolio</h4>
+<p class="text-body-md font-body-md text-on-surface-variant line-clamp-2">How to build a robust, 'set-and-forget' portfolio that aligns with a low-stress, high-key financial philosophy.</p>
+</div>
+</article>
+</div>
+</div>
+<!-- Sticky Sidebar -->
+<aside class="lg:col-span-4 flex flex-col gap-8">
+<!-- Ad Placeholder Sidebar -->
+<div class="w-full h-[600px] border border-tertiary rounded-DEFAULT ad-placeholder flex items-center justify-center relative sticky top-28">
+<span class="text-label-md font-label-md text-outline uppercase tracking-wider absolute top-2 left-2 text-[10px]">Advertisement</span>
+<span class="text-body-md font-body-md text-tertiary-container">Sidebar Ad Space</span>
+</div>
+</aside>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-primary dark:bg-surface-container-lowest text-on-primary dark:text-on-surface w-full py-stack-lg px-margin-desktop max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-gutter mt-auto pt-16 pb-8 border-t border-primary-container">
+<div class="text-headline-md font-headline-md font-bold text-on-primary dark:text-on-surface mb-4 md:mb-0">
+            MMHow
+        </div>
+<nav class="flex flex-wrap justify-center gap-6 mb-4 md:mb-0">
+<a class="text-on-primary/80 dark:text-on-surface/80 hover:text-on-primary dark:hover:text-on-surface hover:underline transition-all text-label-md font-label-md focus:ring-2 focus:ring-secondary-fixed rounded outline-none" href="#">About Us</a>
+<a class="text-on-primary/80 dark:text-on-surface/80 hover:text-on-primary dark:hover:text-on-surface hover:underline transition-all text-label-md font-label-md focus:ring-2 focus:ring-secondary-fixed rounded outline-none" href="#">Terms of Service</a>
+<a class="text-on-primary/80 dark:text-on-surface/80 hover:text-on-primary dark:hover:text-on-surface hover:underline transition-all text-label-md font-label-md focus:ring-2 focus:ring-secondary-fixed rounded outline-none" href="#">Privacy Policy</a>
+<a class="text-on-primary/80 dark:text-on-surface/80 hover:text-on-primary dark:hover:text-on-surface hover:underline transition-all text-label-md font-label-md focus:ring-2 focus:ring-secondary-fixed rounded outline-none" href="#">Contact</a>
+<a class="text-on-primary/80 dark:text-on-surface/80 hover:text-on-primary dark:hover:text-on-surface hover:underline transition-all text-label-md font-label-md focus:ring-2 focus:ring-secondary-fixed rounded outline-none" href="#">Newsletter</a>
+</nav>
+<div class="text-body-md font-body-md text-on-primary/70 dark:text-on-surface/70 text-center md:text-right text-sm">
+            © 2024 MMHow. Strategic Wealth Strategies for the Modern Side-Hustler.
+        </div>
+</footer>
+</body></html>
