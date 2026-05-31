@@ -43,3 +43,6 @@ media/
 # generated SEO files (rebuilt via npm run generate:sitemap)
 public/sitemap.xml
 public/robots.txt
+
+# cron logs
+logs/

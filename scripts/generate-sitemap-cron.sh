@@ -3,7 +3,7 @@
 set -euo pipefail
 
 APP_DIR="${MMHOW_APP_DIR:-/var/www/mmhow/app}"
-LOG_DIR="${MMHOW_LOG_DIR:-/var/log/mmhow}"
+LOG_DIR="${MMHOW_LOG_DIR:-${APP_DIR}/logs}"
 
 mkdir -p "$LOG_DIR"
 cd "$APP_DIR"

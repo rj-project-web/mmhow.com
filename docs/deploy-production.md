@@ -182,7 +182,7 @@ cd /var/www/mmhow/app
 bash scripts/install-sitemap-cron.sh
 ```
 
-日志：`/var/log/mmhow/sitemap.log`
+日志：`/var/www/mmhow/app/logs/sitemap.log`
 
 ---
 

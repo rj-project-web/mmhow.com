@@ -16,4 +16,4 @@ fi
 
 echo "Test run:"
 MMHOW_APP_DIR="$APP_DIR" bash "${APP_DIR}/scripts/generate-sitemap-cron.sh"
-echo "Done. Log: /var/log/mmhow/sitemap.log"
+echo "Done. Log: ${APP_DIR}/logs/sitemap.log"
