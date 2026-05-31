@@ -6,9 +6,10 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
+    "build": "cross-env NODE_OPTIONS=--no-deprecation npm run generate:sitemap && cross-env NODE_OPTIONS=--no-deprecation next build",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev -p 3001",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
+    "generate:sitemap": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx/esm src/scripts/generate-sitemap.ts",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "seed:admin": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx/esm src/scripts/seed-admin.ts",

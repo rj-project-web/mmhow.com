@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { SiteLogo } from '@/components/layout/SiteLogo'
 import type { SiteCategory } from '@/lib/categories'
 
 const footerLinks = [
@@ -18,7 +19,7 @@ export function SiteFooter({ categories }: SiteFooterProps) {
     <footer className="mx-auto mt-auto w-full max-w-container-max border-t border-outline bg-white px-margin-mobile py-12 pb-8 pt-14 md:px-margin-desktop">
       <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
         <div>
-          <div className="mb-3 font-headline-md text-headline-md font-bold text-primary">MMHow</div>
+          <SiteLogo className="mb-3" sizeClass="h-[65px] sm:h-[72px]" />
           <p className="max-w-sm font-body-md text-body-md text-on-surface-variant">
             How to make money online — side hustles, freelancing, investing, and passive income.
           </p>

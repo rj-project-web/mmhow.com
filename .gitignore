@@ -39,3 +39,7 @@ src/app/(payload)/admin/importMap.js
 
 # media uploads (local dev)
 media/
+
+# generated SEO files (rebuilt via npm run generate:sitemap)
+public/sitemap.xml
+public/robots.txt

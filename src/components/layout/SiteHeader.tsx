@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ChevronDown, Search } from 'lucide-react'
 
+import { SiteLogo } from '@/components/layout/SiteLogo'
 import type { SiteCategory } from '@/lib/categories'
 
 type SiteHeaderProps = {
@@ -11,14 +12,9 @@ export function SiteHeader({ categories }: SiteHeaderProps) {
   const firstCategory = categories[0]
 
   return (
-    <header className="sticky top-0 z-50 mx-auto flex h-20 w-full max-w-container-max items-center justify-between border-b border-outline bg-white/95 px-margin-mobile backdrop-blur-sm md:px-margin-desktop">
+    <header className="sticky top-0 z-50 mx-auto flex min-h-[86px] w-full max-w-container-max items-center justify-between border-b border-outline bg-white/95 px-margin-mobile py-2.5 backdrop-blur-sm md:min-h-[97px] md:px-margin-desktop">
       <div className="flex min-w-0 flex-1 items-center gap-gutter">
-        <Link className="flex shrink-0 flex-col leading-tight" href="/">
-          <span className="font-headline-md text-headline-md font-bold text-primary">MMHow</span>
-          <span className="hidden font-label-md text-[11px] font-semibold uppercase tracking-widest text-on-surface-variant sm:block">
-            How to Make Money
-          </span>
-        </Link>
+        <SiteLogo priority sizeClass="h-[61px] sm:h-[68px] md:h-[79px]" />
         <nav className="ml-4 hidden min-w-0 items-center gap-2 md:flex">
           <div className="group relative">
             <button
@@ -65,12 +61,6 @@ export function SiteHeader({ categories }: SiteHeaderProps) {
             type="search"
           />
         </div>
-        <Link
-          className="hidden px-4 py-2 font-label-md text-label-md text-on-surface-variant hover:text-primary sm:inline"
-          href="/admin"
-        >
-          Admin
-        </Link>
         <Link
           className="btn-cta-sm"
           href={firstCategory ? `/category/${firstCategory.slug}` : '/categories'}

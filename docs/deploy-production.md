@@ -160,6 +160,30 @@ SEED_ADMIN_EMAIL=admin@mmhow.com SEED_ADMIN_PASSWORD=强密码 npm run seed:admi
 2. 文档：[agent-api.md](./agent-api.md)  
 3. 生产 URL：`https://mmhow.com/api/agent/articles`
 
+### Sitemap（SEO，一次性 + 每周自动）
+
+构建时会生成静态文件：
+
+- `public/sitemap.xml` — 首页、分类、专题、已发布文章
+- `public/robots.txt` — 指向 sitemap
+
+访问：`https://www.mmhow.com/sitemap.xml`
+
+**手动生成：**
+
+```bash
+npm run generate:sitemap
+```
+
+**线上每周日 03:00 自动重新生成**（有新文章后纳入 sitemap，无需重启应用）：
+
+```bash
+cd /var/www/mmhow/app
+bash scripts/install-sitemap-cron.sh
+```
+
+日志：`/var/log/mmhow/sitemap.log`
+
 ---
 
 ## 第五阶段：日常内容编辑（上线后）
