@@ -3,7 +3,11 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 import { ArticleCard, SectionHeading } from '@/components/article/ArticleCard'
-import { AdPlaceholder } from '@/components/ui/AdPlaceholder'
+import {
+  ArticlePickStrip,
+  ArticleSidebar,
+} from '@/components/article/ArticleRecommendations'
+import { toArticleSummary } from '@/lib/articles'
 import { getMediaUrl, getPayloadClient } from '@/lib/payload'
 
 type PageProps = {
@@ -88,7 +92,12 @@ export default async function TopicPage({ params }: PageProps) {
         </div>
       </section>
 
-      <AdPlaceholder className="h-[90px] w-full" label="Topic Leaderboard Ad" />
+      {articles.length > 0 && (
+        <ArticlePickStrip
+          articles={articles.slice(0, 3).map(toArticleSummary)}
+          title={`Featured in ${topic.name}`}
+        />
+      )}
 
       <section className="grid grid-cols-1 gap-gutter lg:grid-cols-12">
         <div className="flex flex-col gap-8 lg:col-span-8">
@@ -109,9 +118,12 @@ export default async function TopicPage({ params }: PageProps) {
             </p>
           )}
         </div>
-        <aside className="lg:col-span-4">
-          <AdPlaceholder className="sticky top-28 h-[600px] w-full" label="Sidebar Ad Space" />
-        </aside>
+        <div className="lg:col-span-4">
+          <ArticleSidebar
+            articles={articles.slice(0, 6).map(toArticleSummary)}
+            title="In This Topic"
+          />
+        </div>
       </section>
     </main>
   )

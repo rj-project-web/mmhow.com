@@ -85,6 +85,9 @@ async function main() {
   const entries: SitemapEntry[] = [
     { loc: `${baseUrl}/`, changefreq: 'daily', priority: 1 },
     { loc: `${baseUrl}/categories`, changefreq: 'weekly', priority: 0.8 },
+    { loc: `${baseUrl}/about`, changefreq: 'monthly', priority: 0.5 },
+    { loc: `${baseUrl}/terms`, changefreq: 'yearly', priority: 0.3 },
+    { loc: `${baseUrl}/privacy`, changefreq: 'yearly', priority: 0.3 },
   ]
 
   const [{ docs: categories }, { docs: topics }, articles] = await Promise.all([

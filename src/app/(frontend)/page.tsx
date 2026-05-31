@@ -2,9 +2,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Lightbulb, TrendingUp } from 'lucide-react'
 
+import {
+  ArticlePickStrip,
+  ArticleSidebar,
+} from '@/components/article/ArticleRecommendations'
 import { ArticleCard, SectionHeading } from '@/components/article/ArticleCard'
 import { CategoriesGrid } from '@/components/category/CategoriesGrid'
-import { AdPlaceholder } from '@/components/ui/AdPlaceholder'
+import { toArticleSummary } from '@/lib/articles'
 import { getAllCategories } from '@/lib/categories'
 import { getPayloadClient } from '@/lib/payload'
 
@@ -15,7 +19,7 @@ export default async function HomePage() {
   const { docs: articles } = await payload.find({
     collection: 'articles',
     depth: 1,
-    limit: 6,
+    limit: 12,
     sort: '-publishedAt',
     where: {
       _status: {
@@ -24,9 +28,12 @@ export default async function HomePage() {
     },
   })
 
+  const summaries = articles.map(toArticleSummary)
   const featured = articles[0]
   const secondary = articles.slice(1, 3)
   const latest = articles.slice(0, 4)
+  const editorPicks = summaries.slice(3, 6)
+  const sidebarArticles = summaries.slice(0, 6)
 
   return (
     <main className="mx-auto flex w-full max-w-container-max flex-grow flex-col gap-ad-clearance px-margin-mobile py-ad-clearance md:px-margin-desktop">
@@ -54,21 +61,22 @@ export default async function HomePage() {
             </Link>
           </div>
         </div>
-        <div className="relative z-10 min-h-[320px] lg:col-span-5 lg:min-h-[400px]">
-          <div className="card-fintech absolute inset-0 overflow-hidden">
+        <div className="relative z-10 min-h-[280px] lg:col-span-5 lg:min-h-[400px]">
+          <div className="card-fintech absolute inset-0 overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50/50 p-4">
             <Image
-              alt="High key minimalist architectural workspace"
-              className="h-full w-full object-cover opacity-80 mix-blend-multiply"
+              alt="Illustration of online income growth — charts, side hustles, and earnings dashboard"
+              className="h-full w-full object-contain object-center"
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 40vw"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcrBhnnIMzKlEDl5tz6rNwLgivMJQb5xBWRPxNECHht2JxUDT8DOL1th0wTOb9AicWRqqMLKOlL38HegiuIojbZ9K9y6ZJfGLl8XCaLpGi5INZxqlW0F8ud5CeA9FfFdEAxV-92nW20EIsScaPLO5AUEjFb5taAsWqMb-y63pfQN-M7uuAP2FvwAM8ZGF02MnshpoGMjt2iQrDgs42iqs6HEr5hTRc1N-F1vG011kmRAVaP4BXowWgncJ5IeqEnwlTs2WDL04NICs"
+              src="/hero-illustration.svg"
+              unoptimized
             />
           </div>
         </div>
       </section>
 
-      <AdPlaceholder className="h-[90px] w-full" label="Leaderboard Ad Space" />
+      <ArticlePickStrip articles={editorPicks} title="Editor's Picks" />
 
       <section className="flex flex-col gap-8">
         <SectionHeading href="/categories" title="Explore Categories" />
@@ -192,12 +200,9 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <aside className="flex flex-col gap-8 lg:col-span-4">
-          <AdPlaceholder
-            className="sticky top-28 h-[600px] w-full"
-            label="Sidebar Ad Space"
-          />
-        </aside>
+        <div className="lg:col-span-4">
+          <ArticleSidebar articles={sidebarArticles} title="Trending Guides" />
+        </div>
       </section>
     </main>
   )

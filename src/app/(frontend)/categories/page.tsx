@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 
+import { ArticlePickStrip } from '@/components/article/ArticleRecommendations'
 import { CategoriesGrid } from '@/components/category/CategoriesGrid'
 import { SectionHeading } from '@/components/article/ArticleCard'
-import { AdPlaceholder } from '@/components/ui/AdPlaceholder'
+import { fetchPublishedArticles } from '@/lib/articles'
 import { getAllCategories } from '@/lib/categories'
+import { getPayloadClient } from '@/lib/payload'
 
 export const metadata: Metadata = {
   title: 'Categories',
@@ -11,7 +13,11 @@ export const metadata: Metadata = {
 }
 
 export default async function CategoriesIndexPage() {
-  const categories = await getAllCategories()
+  const payload = await getPayloadClient()
+  const [categories, latestArticles] = await Promise.all([
+    getAllCategories(),
+    fetchPublishedArticles(payload, { limit: 3 }),
+  ])
 
   return (
     <main className="mx-auto flex w-full max-w-container-max flex-grow flex-col gap-ad-clearance px-margin-mobile py-ad-clearance md:px-margin-desktop">
@@ -28,7 +34,7 @@ export default async function CategoriesIndexPage() {
         </p>
       </section>
 
-      <AdPlaceholder className="h-[90px] w-full" label="Leaderboard Ad Space" />
+      <ArticlePickStrip articles={latestArticles} title="Latest Guides" />
 
       <section className="flex flex-col gap-8">
         <SectionHeading title="Categories" />

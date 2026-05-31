@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { ArticleCard, SectionHeading } from '@/components/article/ArticleCard'
-import { AdPlaceholder } from '@/components/ui/AdPlaceholder'
+import { ArticlePickStrip } from '@/components/article/ArticleRecommendations'
+import { toArticleSummary } from '@/lib/articles'
 import { getPayloadClient } from '@/lib/payload'
 
 type PageProps = {
@@ -69,7 +70,12 @@ export default async function CategoryPage({ params }: PageProps) {
         )}
       </section>
 
-      <AdPlaceholder className="h-[90px] w-full" label="Category Leaderboard Ad" />
+      {articles.length > 0 && (
+        <ArticlePickStrip
+          articles={articles.slice(0, 3).map(toArticleSummary)}
+          title={`Top in ${category.name}`}
+        />
+      )}
 
       <section className="flex flex-col gap-8">
         <SectionHeading title={`Articles in ${category.name}`} />

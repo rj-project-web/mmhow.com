@@ -39,16 +39,6 @@
       'opsz' 24;
   }
 
-  .ad-placeholder {
-    background: repeating-linear-gradient(
-      45deg,
-      #f8fafc,
-      #f8fafc 10px,
-      #f1f5f9 10px,
-      #f1f5f9 20px
-    );
-  }
-
   .prose-money a {
     @apply text-primary underline decoration-primary/30 underline-offset-2 hover:decoration-primary;
   }

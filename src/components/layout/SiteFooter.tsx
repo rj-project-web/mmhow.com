@@ -4,9 +4,9 @@ import { SiteLogo } from '@/components/layout/SiteLogo'
 import type { SiteCategory } from '@/lib/categories'
 
 const footerLinks = [
-  { href: '#', label: 'About Us' },
-  { href: '#', label: 'Terms of Service' },
-  { href: '#', label: 'Privacy Policy' },
+  { href: '/about', label: 'About Us' },
+  { href: '/terms', label: 'Terms of Service' },
+  { href: '/privacy', label: 'Privacy Policy' },
   { href: '/categories', label: 'Categories' },
 ]
 

@@ -30,6 +30,9 @@ const nextConfig: NextConfig = {
       {
         pathname: '/mmhow-logo.png',
       },
+      {
+        pathname: '/hero-illustration.svg',
+      },
     ],
   },
   webpack: (webpackConfig) => {

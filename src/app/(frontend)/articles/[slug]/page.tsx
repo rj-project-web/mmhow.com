@@ -4,9 +4,13 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { ArticleContent } from '@/components/article/ArticleContent'
+import {
+  ArticleSidebar,
+  ContinueReading,
+} from '@/components/article/ArticleRecommendations'
 import { CommentForm } from '@/components/comment/CommentForm'
 import { CommentList } from '@/components/comment/CommentList'
-import { AdPlaceholder } from '@/components/ui/AdPlaceholder'
+import { fetchPublishedArticles } from '@/lib/articles'
 import { formatDate, getMediaUrl, getPayloadClient } from '@/lib/payload'
 
 type PageProps = {
@@ -64,6 +68,21 @@ export default async function ArticleDetailPage({ params }: PageProps) {
       ? getMediaUrl(article.featuredImage.url)
       : null
 
+  const categoryId =
+    article.category && typeof article.category === 'object' ? article.category.id : undefined
+
+  const [relatedInCategory, moreToRead] = await Promise.all([
+    fetchPublishedArticles(payload, {
+      limit: 2,
+      excludeId: article.id,
+      categoryId,
+    }),
+    fetchPublishedArticles(payload, {
+      limit: 6,
+      excludeId: article.id,
+    }),
+  ])
+
   return (
     <main className="mx-auto flex w-full max-w-container-max flex-grow flex-col gap-ad-clearance px-margin-mobile py-ad-clearance md:px-margin-desktop">
       <article className="grid grid-cols-1 gap-gutter lg:grid-cols-12">
@@ -96,7 +115,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
             </div>
           )}
 
-          <AdPlaceholder className="h-[90px] w-full" label="In-Article Ad Space" />
+          <ContinueReading articles={relatedInCategory} />
 
           <ArticleContent content={article.content} />
 
@@ -130,9 +149,9 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           </section>
         </div>
 
-        <aside className="lg:col-span-4">
-          <AdPlaceholder className="sticky top-28 h-[600px] w-full" label="Sidebar Ad Space" />
-        </aside>
+        <div className="lg:col-span-4">
+          <ArticleSidebar articles={moreToRead} title="Related Guides" />
+        </div>
       </article>
     </main>
   )
