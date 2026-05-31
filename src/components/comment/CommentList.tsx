@@ -21,7 +21,7 @@ export function CommentList({ comments }: { comments: CommentItem[] }) {
       {comments.map((comment) => (
         <article
           key={comment.id}
-          className="rounded-xl border border-outline-variant bg-surface-container-lowest p-5"
+          className="card-fintech p-5"
         >
           <div className="mb-2 flex items-center justify-between gap-4">
             <h4 className="font-label-md text-label-md text-on-surface">{comment.authorName}</h4>

@@ -15,7 +15,7 @@ type SiteFooterProps = {
 
 export function SiteFooter({ categories }: SiteFooterProps) {
   return (
-    <footer className="mx-auto mt-auto w-full max-w-container-max border-t border-outline-variant bg-surface-container-low px-margin-mobile py-12 pb-8 pt-14 md:px-margin-desktop">
+    <footer className="mx-auto mt-auto w-full max-w-container-max border-t border-outline bg-white px-margin-mobile py-12 pb-8 pt-14 md:px-margin-desktop">
       <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
         <div>
           <div className="mb-3 font-headline-md text-headline-md font-bold text-primary">MMHow</div>
@@ -36,7 +36,7 @@ export function SiteFooter({ categories }: SiteFooterProps) {
         </nav>
       </div>
       {categories.length > 0 && (
-        <div className="mb-8 border-t border-outline-variant/80 pt-8">
+        <div className="mb-8 border-t border-outline pt-8">
           <h2 className="mb-4 font-label-md text-label-md uppercase tracking-widest text-on-surface-variant">
             Categories
           </h2>
@@ -54,7 +54,7 @@ export function SiteFooter({ categories }: SiteFooterProps) {
           </ul>
         </div>
       )}
-      <div className="border-t border-outline-variant/80 pt-6 text-center font-body-md text-sm text-on-surface-variant md:text-right">
+      <div className="border-t border-outline pt-6 text-center font-body-md text-sm text-on-surface-variant md:text-right">
         © {new Date().getFullYear()} MMHow. All rights reserved.
       </div>
     </footer>

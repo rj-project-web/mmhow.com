@@ -63,11 +63,11 @@ export default async function TopicPage({ params }: PageProps) {
 
   return (
     <main className="mx-auto flex w-full max-w-container-max flex-grow flex-col gap-ad-clearance px-margin-mobile py-ad-clearance md:px-margin-desktop">
-      <section className="relative overflow-hidden rounded-xl border border-tertiary bg-surface-container-low">
+      <section className="card-fintech relative overflow-hidden">
         {heroImage && (
           <Image
             alt={topic.name}
-            className="absolute inset-0 h-full w-full object-cover opacity-20"
+            className="absolute inset-0 h-full w-full object-cover opacity-15"
             fill
             sizes="100vw"
             src={heroImage}

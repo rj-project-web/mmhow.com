@@ -5,7 +5,7 @@ import type { SiteCategory } from '@/lib/categories'
 export function CategoryCard({ category }: { category: SiteCategory }) {
   return (
     <Link
-      className="group flex flex-col gap-3 rounded-xl border border-tertiary bg-surface-container-lowest p-6 transition-shadow hover:shadow-[0_4px_20px_rgba(0,0,0,0.04)]"
+      className="card-fintech group flex flex-col gap-3 p-6"
       href={`/category/${category.slug}`}
     >
       <h3 className="font-headline-md text-headline-md text-on-surface transition-colors group-hover:text-primary">

@@ -30,10 +30,9 @@ export default async function HomePage() {
 
   return (
     <main className="mx-auto flex w-full max-w-container-max flex-grow flex-col gap-ad-clearance px-margin-mobile py-ad-clearance md:px-margin-desktop">
-      <section className="relative grid min-h-[560px] grid-cols-1 items-center gap-gutter overflow-hidden rounded-2xl border border-outline-variant bg-money-gradient p-8 md:p-12 lg:grid-cols-12">
-        <div className="pointer-events-none absolute inset-0 bg-hero-glow" aria-hidden />
+      <section className="relative grid min-h-[560px] grid-cols-1 items-center gap-gutter overflow-hidden rounded-2xl bg-hero-subtle p-8 md:p-12 lg:grid-cols-12">
         <div className="relative z-10 flex flex-col gap-6 lg:col-span-7">
-          <span className="inline-flex w-fit items-center rounded-full border border-secondary/30 bg-accent-muted px-4 py-1.5 font-label-md text-label-md text-secondary">
+          <span className="inline-flex w-fit items-center rounded-full bg-blue-50 px-4 py-1.5 font-label-md text-label-md text-blue-600">
             How to Make Money
           </span>
           <h1 className="font-display-lg text-display-lg text-on-surface">
@@ -44,14 +43,11 @@ export default async function HomePage() {
             e-commerce, digital products, and building passive income streams that actually work.
           </p>
           <div className="flex flex-wrap gap-4 pt-4">
-            <Link
-              className="rounded-DEFAULT bg-primary px-8 py-4 font-label-md text-label-md text-on-primary shadow-sm transition-all hover:bg-surface-tint hover:shadow-md"
-              href="/categories"
-            >
+            <Link className="btn-cta" href="/categories">
               Start Making Money
             </Link>
             <Link
-              className="rounded-DEFAULT border border-secondary bg-transparent px-8 py-4 font-label-md text-label-md text-secondary transition-all hover:bg-secondary-container"
+              className="btn-cta-secondary"
               href={latest[0] ? `/articles/${latest[0].slug}` : '/categories'}
             >
               Latest Guides
@@ -59,7 +55,7 @@ export default async function HomePage() {
           </div>
         </div>
         <div className="relative z-10 min-h-[320px] lg:col-span-5 lg:min-h-[400px]">
-          <div className="absolute inset-0 overflow-hidden rounded-xl border border-primary/20 bg-surface-container-low shadow-sm">
+          <div className="card-fintech absolute inset-0 overflow-hidden">
             <Image
               alt="High key minimalist architectural workspace"
               className="h-full w-full object-cover opacity-80 mix-blend-multiply"
@@ -100,7 +96,7 @@ export default async function HomePage() {
               variant="featured"
             />
           ) : (
-            <div className="col-span-2 row-span-2 flex items-center justify-center rounded-xl border border-dashed border-tertiary bg-surface-container-low p-8 font-body-md text-body-md text-on-surface-variant">
+            <div className="col-span-2 row-span-2 flex items-center justify-center card-fintech p-8 font-body-md text-body-md text-on-surface-variant">
               Publish your first article in the admin panel to populate featured content.
             </div>
           )}
@@ -123,10 +119,10 @@ export default async function HomePage() {
             ))
           ) : (
             <>
-              <div className="flex flex-col justify-between rounded-xl border border-tertiary bg-surface-container-lowest p-6">
+              <div className="card-fintech flex flex-col justify-between p-6">
                 <TrendingUp className="mb-4 h-8 w-8 text-primary" />
                 <div>
-                  <span className="mb-1 block font-label-md text-label-md text-tertiary">
+                  <span className="mb-1 block font-label-md text-label-md text-on-surface-variant">
                     Investment
                   </span>
                   <h4 className="font-headline-md text-body-lg font-semibold text-on-surface">
@@ -134,10 +130,10 @@ export default async function HomePage() {
                   </h4>
                 </div>
               </div>
-              <div className="flex flex-col justify-between rounded-xl border border-tertiary bg-surface-container-lowest p-6">
-                <Lightbulb className="mb-4 h-8 w-8 text-primary" />
+              <div className="card-fintech flex flex-col justify-between p-6">
+                <Lightbulb className="mb-4 h-8 w-8 text-emerald-500" />
                 <div>
-                  <span className="mb-1 block font-label-md text-label-md text-tertiary">
+                  <span className="mb-1 block font-label-md text-label-md text-on-surface-variant">
                     Side Hustles
                   </span>
                   <h4 className="font-headline-md text-body-lg font-semibold text-on-surface">
@@ -152,7 +148,7 @@ export default async function HomePage() {
 
       <section className="mt-12 grid grid-cols-1 gap-gutter lg:grid-cols-12">
         <div className="flex flex-col gap-8 lg:col-span-8">
-          <div className="flex flex-col items-center gap-8 rounded-xl border border-tertiary bg-surface-container-low p-10 md:flex-row">
+          <div className="card-fintech flex flex-col items-center gap-8 p-10 md:flex-row">
             <div className="flex-1">
               <h3 className="mb-4 font-headline-md text-headline-md text-on-surface">
                 Money Moves Newsletter
@@ -163,14 +159,11 @@ export default async function HomePage() {
               </p>
               <form className="flex w-full max-w-md gap-2">
                 <input
-                  className="flex-1 rounded-DEFAULT border border-tertiary bg-surface px-4 py-3 font-body-md text-body-md focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="flex-1 rounded-xl border border-outline bg-white px-4 py-3 font-body-md text-body-md focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="Enter your email"
                   type="email"
                 />
-                <button
-                  className="rounded-DEFAULT bg-primary px-6 py-3 font-label-md text-label-md text-on-primary transition-colors hover:bg-surface-tint"
-                  type="button"
-                >
+                <button className="btn-cta-sm shrink-0" type="button">
                   Subscribe
                 </button>
               </form>
@@ -178,7 +171,7 @@ export default async function HomePage() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <h3 className="mb-2 border-b border-outline-variant pb-4 font-headline-md text-headline-md text-on-surface">
+            <h3 className="mb-2 border-b border-outline pb-4 font-headline-md text-headline-md text-on-surface">
               Latest Money Guides
             </h3>
             {latest.length > 0 ? (

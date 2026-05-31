@@ -7,6 +7,8 @@ import { SiteHeader } from '@/components/layout/SiteHeader'
 import { getAllCategories } from '@/lib/categories'
 import '@/styles/globals.css'
 
+export const dynamic = 'force-dynamic'
+
 const sourceSans = Source_Sans_3({
   subsets: ['latin'],
   variable: '--font-source-sans',

@@ -29,19 +29,19 @@ export function ArticleCard({
   if (variant === 'featured') {
     return (
       <Link
-        className="group relative col-span-2 row-span-2 overflow-hidden rounded-xl border border-tertiary bg-surface-container-lowest transition-shadow hover:shadow-[0_4px_20px_rgba(0,0,0,0.04)] md:col-span-2 md:row-span-2"
+        className="card-fintech group relative col-span-2 row-span-2 overflow-hidden md:col-span-2 md:row-span-2"
         href={href}
       >
         {mediaUrl && (
           <Image
             alt={title}
-            className="absolute inset-0 h-full w-full object-cover opacity-30"
+            className="absolute inset-0 h-full w-full object-cover opacity-25"
             fill
             sizes="(max-width: 768px) 100vw, 66vw"
             src={mediaUrl}
           />
         )}
-        <div className="absolute inset-0 z-10 flex flex-col justify-end bg-gradient-to-t from-surface via-surface/80 to-transparent p-8">
+        <div className="absolute inset-0 z-10 flex flex-col justify-end bg-gradient-to-t from-white via-white/90 to-transparent p-8">
           {categoryName && (
             <span className="mb-2 font-label-md text-label-md uppercase tracking-widest text-primary">
               {categoryName}
@@ -60,21 +60,22 @@ export function ArticleCard({
 
   if (variant === 'compact') {
     return (
-      <Link
-        className="group flex flex-col justify-between rounded-xl border border-tertiary bg-surface-container-lowest p-6 transition-shadow hover:shadow-[0_4px_20px_rgba(0,0,0,0.04)]"
-        href={href}
-      >
+      <Link className="card-fintech group flex flex-col justify-between p-6" href={href}>
         {categoryName && (
-          <span className="mb-1 block font-label-md text-label-md text-tertiary">{categoryName}</span>
+          <span className="mb-1 block font-label-md text-label-md text-on-surface-variant">
+            {categoryName}
+          </span>
         )}
-        <h4 className="font-headline-md text-body-lg font-semibold text-on-surface">{title}</h4>
+        <h4 className="font-headline-md text-body-lg font-semibold text-on-surface transition-colors group-hover:text-primary">
+          {title}
+        </h4>
       </Link>
     )
   }
 
   return (
-    <article className="group flex cursor-pointer items-start gap-6 border-b border-[#F1F5F9] py-4">
-      <div className="w-24 shrink-0 pt-1 font-label-md text-label-md text-tertiary">
+    <article className="group flex cursor-pointer items-start gap-6 border-b border-outline py-4">
+      <div className="w-24 shrink-0 pt-1 font-label-md text-label-md text-on-surface-variant">
         {formatDate(publishedAt)}
       </div>
       <div>
@@ -101,11 +102,11 @@ export function SectionHeading({
   linkLabel?: string
 }) {
   return (
-    <div className="flex items-end justify-between border-b border-outline-variant pb-4">
+    <div className="flex items-end justify-between border-b border-outline pb-4">
       <h2 className="font-headline-lg text-headline-lg text-on-surface">{title}</h2>
       {href && (
         <Link
-          className="group flex items-center gap-1 font-label-md text-label-md text-primary transition-colors hover:text-surface-tint"
+          className="group flex items-center gap-1 font-label-md text-label-md text-primary transition-colors hover:text-blue-700"
           href={href}
         >
           {linkLabel}

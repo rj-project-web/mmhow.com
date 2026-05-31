@@ -1,7 +1,8 @@
+import type { SerializedEditorState } from 'lexical'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 
 type ArticleContentProps = {
-  content: Record<string, unknown>
+  content: SerializedEditorState
 }
 
 export function ArticleContent({ content }: ArticleContentProps) {

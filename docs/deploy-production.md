@@ -47,11 +47,21 @@ npm run build
 
 ## 第二阶段：VPS 环境（一次性）
 
+### 0. SSH 密钥登录 + 环境检查
+
+见 **[docs/vps-ssh-setup.md](./vps-ssh-setup.md)**。服务器上一键安装依赖：
+
+```bash
+bash server-bootstrap.sh
+```
+
+（从本仓库 `scripts/server-bootstrap.sh` 复制到服务器，或 `git clone` 后执行。）
+
 ### 1. 服务器准备
 
 - Ubuntu 24.04，2核 4G 起
 - 域名 `mmhow.com` DNS → VPS IP
-- 安装：Docker、Docker Compose、Nginx、Certbot
+- 安装：Docker、Docker Compose、 Nginx、Certbot
 
 ### 2. 启动 PostgreSQL
 
@@ -79,15 +89,31 @@ NEXT_PUBLIC_SERVER_URL=https://mmhow.com
 
 > **重要：** 线上需把 `payload.config.ts` 从 SQLite 改为 PostgreSQL（见下方「数据库切换」）。
 
-### 4. Nginx + SSL
+### 4. 云厂商安全组（必做，否则 HTTPS 打不开）
 
-- 反代 `https://mmhow.com` → `http://127.0.0.1:3000`
-- `client_max_body_size 50M`（上传图片）
-- `/media/` 可由 Nginx 直读静态目录（可选）
+服务器上 `ufw allow 443` **不够**。腾讯云 / 其他 VPS 还需在控制台为实例放行：
+
+| 协议 | 端口 | 来源 |
+|------|------|------|
+| TCP | 80 | 0.0.0.0/0 |
+| TCP | 443 | 0.0.0.0/0 |
+
+**现象：** `http://www.mmhow.com` 返回 301 到 HTTPS，但浏览器一直转圈——多半是 **443 在安全组未开放**（本机 `curl -k https://127.0.0.1` 正常，外网 `nc -zv IP 443` 超时）。
+
+### 5. Nginx + SSL
+
+- 使用仓库内 `deploy/nginx-mmhow.conf`（反代 → `127.0.0.1:3000`，`client_max_body_size 50M`）
+- 不要用 Certbot 改 `default` 后仍只指向 `/var/www/html` 欢迎页
 
 ```bash
+sudo cp /var/www/mmhow/app/deploy/nginx-mmhow.conf /etc/nginx/sites-available/mmhow
+sudo ln -sf /etc/nginx/sites-available/mmhow /etc/nginx/sites-enabled/mmhow
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo nginx -t && sudo systemctl reload nginx
 sudo certbot --nginx -d mmhow.com -d www.mmhow.com
 ```
+
+证书若已申请过，只需 `certbot install` 或手动核对 `ssl_certificate` 路径。
 
 ---
 

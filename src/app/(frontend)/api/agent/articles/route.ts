@@ -93,21 +93,34 @@ export async function POST(request: Request) {
       topicIds = docs.map((t) => t.id)
     }
 
-    const article = await payload.create({
-      collection: 'articles',
-      data: {
-        title: body.title.trim(),
-        slug: body.slug?.trim() || undefined,
-        excerpt: body.excerpt?.trim() || excerptFromDescription(body.description),
-        content,
-        featuredImage: featuredImageId,
-        category: categoryId,
-        topics: topicIds,
-        _status: status,
-        publishedAt: status === 'published' ? new Date().toISOString() : undefined,
-      },
-      req,
-    })
+    const toId = (id: number | string | undefined) =>
+      id == null ? undefined : typeof id === 'number' ? id : Number(id)
+
+    const articleData = {
+      title: body.title.trim(),
+      slug: body.slug?.trim() || undefined,
+      excerpt: body.excerpt?.trim() || excerptFromDescription(body.description),
+      content,
+      featuredImage: toId(featuredImageId),
+      category: toId(categoryId),
+      topics: topicIds?.map((id) => toId(id) as number),
+      _status: status as 'draft' | 'published',
+      publishedAt: status === 'published' ? new Date().toISOString() : undefined,
+    }
+
+    const article =
+      status === 'draft'
+        ? await payload.create({
+            collection: 'articles',
+            draft: true,
+            data: articleData,
+            req,
+          })
+        : await payload.create({
+            collection: 'articles',
+            data: articleData,
+            req,
+          })
 
     const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001'
 

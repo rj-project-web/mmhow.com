@@ -1,35 +1,41 @@
 # Agent API — 文章发布
 
-面向 OpenClaw / Cursor Agent 等自动化工具，用 **API Key** 提交文章。
+面向 OpenClaw / Cursor Agent 等自动化工具，用 **API Key** 提交文章（标题、正文、封面图、插图），带权限校验。
 
-## 鉴权
+**线上地址：** `https://www.mmhow.com/api/agent/articles`
 
-在 Payload 后台创建 API Key：
+## 鉴权（权限控制）
 
-1. 登录 http://localhost:3001/admin  
-2. **Users** → 你的账号 → 勾选 **Enable API Key** → 保存 → 复制 Key  
+仅持有有效 **API Key** 的用户可调用 `POST` / 受保护的 `GET`。未带 Key 或 Key 无效 → `401 Unauthorized`。
 
-请求头：
+### 1. 创建 API Key（生产环境）
+
+1. 登录 https://www.mmhow.com/admin  
+2. **Users** → 你的账号 → 勾选 **Enable API Key** → 保存 → 复制 Key（只显示一次，请妥善保存）
+
+### 2. 请求头
 
 ```http
 Authorization: users API-Key YOUR_API_KEY_HERE
 Content-Type: application/json
 ```
 
+本地开发把域名换成 `http://localhost:3001` 即可。
+
 ## 分类（你手动维护）
 
-分类在后台 **Categories** 里维护，或由你发给我录入。Agent 发文章时用 `category` 字段传 **slug**。
+分类在后台 **Categories** 里维护。Agent 发文章时用 `category` 字段传 **slug**。
 
-查询已有分类：
+查询已有分类（需 API Key）：
 
 ```bash
-curl http://localhost:3001/api/agent/categories \
+curl https://www.mmhow.com/api/agent/categories \
   -H "Authorization: users API-Key YOUR_KEY"
 ```
 
 ## 发布文章
 
-**POST** `/api/agent/articles`
+**POST** `https://www.mmhow.com/api/agent/articles`
 
 ### 请求体
 
@@ -39,17 +45,17 @@ curl http://localhost:3001/api/agent/categories \
 | `description` | ✅ | 正文（推荐 Markdown） |
 | `descriptionFormat` | | `markdown`（默认） / `html` / `plain` |
 | `excerpt` | | 列表摘要，不传则自动截取正文 |
-| `featuredImage` | | 封面图 URL |
+| `featuredImage` | | 封面图 URL（服务端会下载并入库） |
 | `images` | | 正文插图 `[{ "url", "alt?", "caption?" }]`，会下载并写入富文本 |
 | `category` | | 分类 slug，如 `investment` |
 | `topics` | | 专题 slug 数组 |
 | `slug` | | 自定义 URL slug |
 | `status` | | `published`（默认）或 `draft` |
 
-### 示例
+### 生产环境示例
 
 ```bash
-curl -X POST http://localhost:3001/api/agent/articles \
+curl -X POST https://www.mmhow.com/api/agent/articles \
   -H "Authorization: users API-Key YOUR_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -65,6 +71,21 @@ curl -X POST http://localhost:3001/api/agent/articles \
   }'
 ```
 
+### 本地示例
+
+```bash
+curl -X POST http://localhost:3001/api/agent/articles \
+  -H "Authorization: users API-Key YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Structuring Your LLC for Remote Consulting",
+    "description": "## Overview\n\nA practical guide to LLC setup.",
+    "featuredImage": "https://example.com/cover.jpg",
+    "category": "guides",
+    "status": "published"
+  }'
+```
+
 ### 成功响应
 
 ```json
@@ -75,24 +96,32 @@ curl -X POST http://localhost:3001/api/agent/articles \
     "title": "...",
     "slug": "...",
     "status": "published",
-    "url": "http://localhost:3001/articles/...",
-    "adminUrl": "http://localhost:3001/admin/collections/articles/1"
+    "url": "https://www.mmhow.com/articles/...",
+    "adminUrl": "https://www.mmhow.com/admin/collections/articles/1"
   }
 }
 ```
 
-## 查看接口说明
+### 错误响应
+
+| HTTP | 含义 |
+|------|------|
+| `401` | 未提供或无效的 API Key |
+| `400` | 缺少 `title`/`description`、分类 slug 不存在等 |
+| `500` | 图片下载失败、服务器内部错误 |
+
+## 查看接口说明（无需鉴权）
 
 ```bash
-curl http://localhost:3001/api/agent/articles
+curl https://www.mmhow.com/api/agent/articles
 ```
 
 ## OpenClaw 提示词片段（可复制）
 
 ```
 发布文章到 MMHow：
-- POST {BASE_URL}/api/agent/articles
+- POST https://www.mmhow.com/api/agent/articles
 - Header: Authorization: users API-Key {API_KEY}
 - Body JSON: title, description (markdown), optional featuredImage, images[], category (slug)
-- 发前先 GET /api/agent/categories 确认分类 slug
+- 发前先 GET https://www.mmhow.com/api/agent/categories 确认分类 slug
 ```

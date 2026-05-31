@@ -3,12 +3,22 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --color-primary: #2563eb;
+    --color-accent: #10b981;
+    --color-surface: #f8fafc;
+    --color-surface-container: #ffffff;
+    --color-text: #0f172a;
+    --color-text-muted: #64748b;
+    --color-outline: #e2e8f0;
+  }
+
   body {
     @apply bg-background text-on-background antialiased;
   }
 
   ::selection {
-    @apply bg-primary/20 text-on-surface;
+    @apply bg-primary/15 text-on-surface;
   }
 }
 
@@ -32,14 +42,37 @@
   .ad-placeholder {
     background: repeating-linear-gradient(
       45deg,
-      #fafaf7,
-      #fafaf7 10px,
-      #f0fdf4 10px,
-      #f0fdf4 20px
+      #f8fafc,
+      #f8fafc 10px,
+      #f1f5f9 10px,
+      #f1f5f9 20px
     );
   }
 
   .prose-money a {
     @apply text-primary underline decoration-primary/30 underline-offset-2 hover:decoration-primary;
+  }
+
+  /* Primary conversion CTA — emerald action */
+  .btn-cta {
+    @apply inline-flex items-center justify-center rounded-xl bg-emerald-500 px-8 py-4 font-label-md text-label-md text-white shadow-md shadow-emerald-500/20 transition-all hover:bg-emerald-600 hover:shadow-lg hover:shadow-emerald-500/25;
+  }
+
+  .btn-cta-sm {
+    @apply inline-flex items-center justify-center rounded-xl bg-emerald-500 px-6 py-2.5 font-label-md text-label-md text-white shadow-md shadow-emerald-500/20 transition-all hover:bg-emerald-600;
+  }
+
+  /* Secondary outline CTA — trust blue */
+  .btn-cta-secondary {
+    @apply inline-flex items-center justify-center rounded-xl border border-blue-600 bg-transparent px-8 py-4 font-label-md text-label-md text-blue-600 transition-all hover:bg-blue-50;
+  }
+
+  .btn-cta-secondary-sm {
+    @apply inline-flex items-center justify-center rounded-xl border border-blue-600 bg-transparent px-6 py-2.5 font-label-md text-label-md text-blue-600 transition-all hover:bg-blue-50;
+  }
+
+  /* FinTech card — white surface + soft shadow */
+  .card-fintech {
+    @apply rounded-xl bg-white shadow-sm shadow-slate-200/40 transition-shadow hover:shadow-md hover:shadow-slate-200/50;
   }
 }

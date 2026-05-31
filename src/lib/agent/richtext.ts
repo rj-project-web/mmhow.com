@@ -1,8 +1,10 @@
 import { convertHTMLToLexical, convertMarkdownToLexical, editorConfigFactory } from '@payloadcms/richtext-lexical'
+import { JSDOM } from 'jsdom'
 import type { Payload, PayloadRequest, SanitizedConfig } from 'payload'
 import { randomUUID } from 'crypto'
 
 import { articleLexicalEditor } from '@/lib/article-editor'
+import type { Article } from '@/payload-types'
 
 import { uploadImageFromUrl, type AgentImageInput } from './media'
 
@@ -61,12 +63,13 @@ export async function buildArticleContent({
     editor: articleLexicalEditor,
   })
 
-  let lexicalState: { root: { children: unknown[]; [key: string]: unknown } }
+  let lexicalState: Article['content']
 
   if (descriptionFormat === 'html') {
     lexicalState = await convertHTMLToLexical({
       editorConfig,
       html: description,
+      JSDOM,
     })
   } else if (descriptionFormat === 'plain') {
     const blocks = description
@@ -81,9 +84,9 @@ export async function buildArticleContent({
         indent: 0,
         version: 1,
         direction: 'ltr',
-        children: blocks.length > 0 ? blocks.map(paragraphNode) : [paragraphNode(description)],
+        children: (blocks.length > 0 ? blocks.map(paragraphNode) : [paragraphNode(description)]) as Article['content']['root']['children'],
       },
-    }
+    } as Article['content']
   } else {
     lexicalState = await convertMarkdownToLexical({
       editorConfig,

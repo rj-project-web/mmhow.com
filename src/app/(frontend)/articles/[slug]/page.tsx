@@ -68,9 +68,9 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     <main className="mx-auto flex w-full max-w-container-max flex-grow flex-col gap-ad-clearance px-margin-mobile py-ad-clearance md:px-margin-desktop">
       <article className="grid grid-cols-1 gap-gutter lg:grid-cols-12">
         <div className="flex flex-col gap-6 lg:col-span-8">
-          <div className="flex flex-wrap items-center gap-3 font-label-md text-label-md text-tertiary">
+          <div className="flex flex-wrap items-center gap-3 font-label-md text-label-md text-on-surface-variant">
             {article.category && typeof article.category === 'object' && (
-              <Link className="text-primary hover:text-surface-tint" href={`/category/${article.category.slug}`}>
+              <Link className="text-primary hover:text-blue-700" href={`/category/${article.category.slug}`}>
                 {article.category.name}
               </Link>
             )}
@@ -84,7 +84,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           <p className="font-body-lg text-body-lg text-on-surface-variant">{article.excerpt}</p>
 
           {heroImage && (
-            <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-tertiary">
+            <div className="relative aspect-[16/9] overflow-hidden rounded-xl shadow-sm shadow-slate-200/40">
               <Image
                 alt={article.title}
                 className="object-cover"
@@ -101,12 +101,12 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           <ArticleContent content={article.content} />
 
           {Array.isArray(article.topics) && article.topics.length > 0 && (
-            <div className="flex flex-wrap gap-2 border-t border-outline-variant pt-6">
+            <div className="flex flex-wrap gap-2 border-t border-outline pt-6">
               {article.topics.map((topic) =>
                 topic && typeof topic === 'object' ? (
                   <Link
                     key={topic.id}
-                    className="rounded-full border border-tertiary px-4 py-2 font-label-md text-label-md text-primary transition-colors hover:bg-surface-container-low"
+                    className="rounded-full bg-blue-50 px-4 py-2 font-label-md text-label-md text-primary transition-colors hover:bg-blue-100"
                     href={`/topic/${topic.slug}`}
                   >
                     {topic.name}
@@ -116,7 +116,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
             </div>
           )}
 
-          <section className="flex flex-col gap-6 border-t border-outline-variant pt-10">
+          <section className="flex flex-col gap-6 border-t border-outline pt-10">
             <h2 className="font-headline-md text-headline-md text-on-surface">Comments</h2>
             <CommentList
               comments={comments.map((comment) => ({

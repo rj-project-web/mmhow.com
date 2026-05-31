@@ -15,7 +15,7 @@ export default async function CategoriesIndexPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-container-max flex-grow flex-col gap-ad-clearance px-margin-mobile py-ad-clearance md:px-margin-desktop">
-      <section className="rounded-xl border border-tertiary bg-surface-container-low p-10">
+      <section className="card-fintech p-10">
         <span className="mb-3 block font-label-md text-label-md uppercase tracking-widest text-primary">
           Browse
         </span>
