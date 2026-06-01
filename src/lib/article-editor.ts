@@ -1,4 +1,5 @@
 import {
+  EXPERIMENTAL_TableFeature,
   FixedToolbarFeature,
   HeadingFeature,
   HorizontalRuleFeature,
@@ -27,5 +28,6 @@ export const articleLexicalEditor = lexicalEditor({
     FixedToolbarFeature(),
     InlineToolbarFeature(),
     HorizontalRuleFeature(),
+    EXPERIMENTAL_TableFeature(),
   ],
 })

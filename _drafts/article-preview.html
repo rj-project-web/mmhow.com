@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MMHow — Article Preview (2 drafts with images)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f9f9ff;
+      --surface: #ffffff;
+      --text: #111c2d;
+      --muted: #434750;
+      --border: #d8e3fb;
+      --primary: #335d94;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Source Sans 3', system-ui, sans-serif;
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+    }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px 96px; }
+    .nav {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(249,249,255,.95);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex; gap: 16px; flex-wrap: wrap;
+      font-size: 14px;
+    }
+    .nav a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .nav a:hover { text-decoration: underline; }
+    .badge {
+      display: inline-block;
+      background: #e7eeff;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 2.25rem;
+      line-height: 1.15;
+      margin: 0 0 16px;
+    }
+    h2 {
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.5rem;
+      margin: 48px 0 16px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    h3 { font-size: 1.15rem; margin: 32px 0 12px; }
+    p, li { color: var(--muted); }
+    p { margin: 0 0 1rem; }
+    ul { padding-left: 1.25rem; }
+    figure {
+      margin: 32px 0;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+    figure img, figure object {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    figcaption {
+      padding: 12px 16px;
+      font-size: 14px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+    .cover { border-radius: 16px; margin-bottom: 32px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      margin: 16px 0;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+    }
+    th { background: #f0f3ff; color: var(--text); }
+    pre {
+      background: #f0f3ff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 14px;
+      overflow-x: auto;
+    }
+    .article-block {
+      margin-bottom: 80px;
+      padding-bottom: 48px;
+      border-bottom: 3px solid var(--border);
+    }
+    .meta { font-size: 14px; color: #737781; margin-bottom: 24px; }
+    .asset-table { font-size: 13px; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <strong>MMHow Draft Preview</strong>
+    <a href="#article-1">Article 1 — 7 AI Paths</a>
+    <a href="#article-2">Article 2 — Cut Outsourcing</a>
+  </nav>
+
+  <!-- ARTICLE 1 -->
+  <article id="article-1" class="wrap article-block">
+    <span class="badge">Draft · ai-powered-side-hustles</span>
+    <h1>7 AI Side Hustle Paths That Can Add $1,000/Day (Realistically)</h1>
+    <p class="meta">Cover: Unsplash · Body diagrams: MMHow original SVG · No AI-generated badges</p>
+
+    <figure class="cover">
+      <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=80" alt="Team collaborating on laptops in a bright office — side hustle and freelancing cover image" />
+      <figcaption>Featured image — Unsplash (free commercial use)</figcaption>
+    </figure>
+
+    <h2>Overview</h2>
+    <p>Can a regular person use AI tools to earn an extra <strong>$1,000 per day</strong>? Yes — but AI is a <strong>leverage tool</strong>, not passive income. It amplifies skills you already have.</p>
+
+    <figure>
+      <img src="http://localhost:3001/article-assets/ai-side-hustle-paths.svg" alt="Seven AI side hustle paths decision chart" />
+      <figcaption>Figure 1 — Original SVG infographic (no AI watermark)</figcaption>
+    </figure>
+
+    <figure>
+      <img src="http://localhost:3001/article-assets/ai-multiplier-framework.svg" alt="Skill times AI tools equals paid delivery" />
+      <figcaption>Figure 2 — The multiplier framework</figcaption>
+    </figure>
+
+    <h2>Path 1: AI-Assisted Writing</h2>
+    <table>
+      <tr><th>Deliverable</th><th>Rate</th><th>Daily volume (with AI)</th></tr>
+      <tr><td>Social posts</td><td>$50–100</td><td>15–20</td></tr>
+      <tr><td>Blog articles</td><td>$200–500</td><td>3–5</td></tr>
+      <tr><td>Product copy</td><td>$100–300</td><td>5–8</td></tr>
+    </table>
+
+    <figure>
+      <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&q=80" alt="Developer laptop with code on screen — creator workspace for AI-assisted work" />
+      <figcaption>Section image — Unsplash developer workspace</figcaption>
+    </figure>
+
+    <h2>Which path to pick?</h2>
+    <pre>Have writing skills?        → Path 1
+Like video?                 → Path 2
+Can follow technical docs?  → Paths 3 or 4
+Strong visual taste?        → Path 5
+Already teach or consult?   → Path 6
+Bilingual?                  → Path 7</pre>
+  </article>
+
+  <!-- ARTICLE 2 -->
+  <article id="article-2" class="wrap article-block">
+    <span class="badge">Draft · ai-powered-side-hustles</span>
+    <h1>How I Replaced $1,000/Month in Outsourcing with AI Tools</h1>
+    <p class="meta">Cover: Unsplash · Charts: MMHow original SVG · Inspired by one-person business workflows</p>
+
+    <figure class="cover">
+      <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1200&q=80" alt="Entrepreneur planning at whiteboard — reducing outsourcing costs with AI tools" />
+      <figcaption>Featured image — Unsplash planning / strategy</figcaption>
+    </figure>
+
+    <h2>Overview</h2>
+    <p>Solo operators often spend <strong>$800–1,500/month</strong> on copywriters, designers, and VAs. This guide shows a compliant swap: AI handles drafts and templates; you keep strategy and quality control.</p>
+
+    <figure>
+      <img src="http://localhost:3001/article-assets/ai-outsourcing-savings.svg" alt="Bar chart comparing outsourcing costs versus AI tool costs" />
+      <figcaption>Figure 1 — Cost comparison (illustrative)</figcaption>
+    </figure>
+
+    <figure>
+      <img src="http://localhost:3001/article-assets/ai-multiplier-framework.svg" alt="Skill times AI equals paid delivery" />
+      <figcaption>Figure 2 — AI as multiplier, not replacement</figcaption>
+    </figure>
+
+    <h2>Illustrative monthly math</h2>
+    <table>
+      <tr><th>Line item</th><th>Outsourced</th><th>AI-assisted solo</th></tr>
+      <tr><td>Copy / posts</td><td>$350–500</td><td>~$20 tools</td></tr>
+      <tr><td>Basic design</td><td>$300–450</td><td>Canva ~$13</td></tr>
+      <tr><td>VA / scheduling</td><td>$250–400</td><td>Your time</td></tr>
+      <tr><th>Total</th><th>~$900–1,350</th><th>~$45–80 tools</th></tr>
+    </table>
+
+    <figure>
+      <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=80" alt="Analytics dashboard on monitor — tracking side hustle metrics and savings" />
+      <figcaption>Section image — Unsplash analytics dashboard</figcaption>
+    </figure>
+
+    <h2>4-step workflow</h2>
+    <ol>
+      <li>Audit outsourced tasks (tag A/B/C)</li>
+      <li>Build one SOP per repeatable task</li>
+      <li>Use Canva + Claude — export without AI badges</li>
+      <li>Measure effective hourly rate monthly</li>
+    </ol>
+  </article>
+
+  <div class="wrap">
+    <h2>Image asset summary</h2>
+    <table class="asset-table">
+      <tr><th>File</th><th>Source</th><th>AI badge?</th></tr>
+      <tr><td>ai-side-hustle-paths.svg</td><td>MMHow original</td><td>No</td></tr>
+      <tr><td>ai-outsourcing-savings.svg</td><td>MMHow original</td><td>No</td></tr>
+      <tr><td>ai-multiplier-framework.svg</td><td>MMHow original</td><td>No</td></tr>
+      <tr><td>Unsplash photos × 4</td><td>Unsplash License</td><td>No</td></tr>
+    </table>
+    <p style="font-size:14px;color:#737781;margin-top:24px">
+      Open this file locally: <code>_drafts/article-preview.html</code><br />
+      Full markdown: <code>_drafts/01-seven-ai-side-hustle-paths.md</code>, <code>_drafts/02-replace-outsourcing-with-ai.md</code>
+    </p>
+  </div>
+</body>
+</html>

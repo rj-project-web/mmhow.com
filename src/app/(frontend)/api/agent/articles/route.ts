@@ -1,5 +1,6 @@
 import configPromise from '@payload-config'
 import { NextResponse } from 'next/server'
+import type { Payload, PayloadRequest } from 'payload'
 
 import { authenticateAgentRequest, AgentAuthError, AgentValidationError } from '@/lib/agent/auth'
 import { uploadImageFromUrl } from '@/lib/agent/media'
@@ -16,6 +17,57 @@ type ArticleBody = {
   slug?: string
   status?: 'published' | 'draft'
   topics?: string[]
+}
+
+async function upsertArticle(
+  payload: Payload,
+  req: PayloadRequest,
+  articleData: Record<string, unknown>,
+  status: 'draft' | 'published',
+) {
+  const slug = typeof articleData.slug === 'string' ? articleData.slug : undefined
+
+  if (slug) {
+    const { docs } = await payload.find({
+      collection: 'articles',
+      limit: 1,
+      where: { slug: { equals: slug } },
+    })
+
+    if (docs.length > 0) {
+      if (status === 'draft') {
+        return payload.update({
+          collection: 'articles',
+          id: docs[0].id,
+          draft: true,
+          data: articleData,
+          req,
+        })
+      }
+
+      return payload.update({
+        collection: 'articles',
+        id: docs[0].id,
+        data: articleData,
+        req,
+      })
+    }
+  }
+
+  if (status === 'draft') {
+    return payload.create({
+      collection: 'articles',
+      draft: true,
+      data: articleData,
+      req,
+    })
+  }
+
+  return payload.create({
+    collection: 'articles',
+    data: articleData,
+    req,
+  })
 }
 
 export async function POST(request: Request) {
@@ -110,17 +162,8 @@ export async function POST(request: Request) {
 
     const article =
       status === 'draft'
-        ? await payload.create({
-            collection: 'articles',
-            draft: true,
-            data: articleData,
-            req,
-          })
-        : await payload.create({
-            collection: 'articles',
-            data: articleData,
-            req,
-          })
+        ? await upsertArticle(payload, req, articleData, 'draft')
+        : await upsertArticle(payload, req, articleData, 'published')
 
     const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001'
 
