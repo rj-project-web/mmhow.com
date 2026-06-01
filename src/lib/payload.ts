@@ -19,5 +19,7 @@ export function formatDate(value?: string | null) {
 export function getMediaUrl(url?: string | null) {
   if (!url) return null
   if (url.startsWith('http')) return url
+  // Same-origin CMS files: relative path so Next.js Image localPatterns match.
+  if (url.startsWith('/api/media/')) return url
   return `${process.env.NEXT_PUBLIC_SERVER_URL}${url}`
 }

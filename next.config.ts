@@ -18,6 +18,16 @@ const nextConfig: NextConfig = {
         hostname: 'lh3.googleusercontent.com',
       },
       {
+        protocol: 'https',
+        hostname: 'www.mmhow.com',
+        pathname: '/api/media/file/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'mmhow.com',
+        pathname: '/api/media/file/**',
+      },
+      {
         protocol: 'http',
         hostname: 'localhost',
         port: '3001',
