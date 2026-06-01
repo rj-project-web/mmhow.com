@@ -78,3 +78,5 @@ for (const spec of articles) {
     `${hasTable ? 'OK' : 'WARN'}: ${updated.slug} (id ${updated.id}) — tables ${hasTable ? 'present' : 'missing'}`,
   )
 }
+
+process.exit(0)
