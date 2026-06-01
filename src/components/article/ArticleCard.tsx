@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 
-import { formatDate, getMediaUrl } from '@/lib/payload'
+import { formatDate, getMediaUrl, isCmsMediaUrl } from '@/lib/payload'
 
 type ArticleCardProps = {
   title: string
@@ -39,6 +39,7 @@ export function ArticleCard({
             fill
             sizes="(max-width: 768px) 100vw, 66vw"
             src={mediaUrl}
+            unoptimized={isCmsMediaUrl(mediaUrl)}
           />
         )}
         <div className="absolute inset-0 z-10 flex flex-col justify-end bg-gradient-to-t from-white via-white/90 to-transparent p-8">

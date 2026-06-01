@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 import type { ArticleSummary } from '@/lib/articles'
-import { formatDate, getMediaUrl } from '@/lib/payload'
+import { formatDate, getMediaUrl, isCmsMediaUrl } from '@/lib/payload'
 
 type ArticleSidebarProps = {
   articles: ArticleSummary[]
@@ -41,6 +41,7 @@ export function ArticleSidebar({
                         fill
                         sizes="64px"
                         src={imageUrl}
+                        unoptimized={isCmsMediaUrl(imageUrl)}
                       />
                     </div>
                   )}
@@ -92,7 +93,14 @@ export function ArticlePickStrip({ articles, title }: ArticlePickStripProps) {
             >
               {imageUrl && (
                 <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg">
-                  <Image alt="" className="object-cover" fill sizes="80px" src={imageUrl} />
+                  <Image
+                    alt=""
+                    className="object-cover"
+                    fill
+                    sizes="80px"
+                    src={imageUrl}
+                    unoptimized={isCmsMediaUrl(imageUrl)}
+                  />
                 </div>
               )}
               <div className="min-w-0 flex-1">

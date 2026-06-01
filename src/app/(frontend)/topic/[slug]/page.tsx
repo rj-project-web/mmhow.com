@@ -8,7 +8,7 @@ import {
   ArticleSidebar,
 } from '@/components/article/ArticleRecommendations'
 import { toArticleSummary } from '@/lib/articles'
-import { getMediaUrl, getPayloadClient } from '@/lib/payload'
+import { getMediaUrl, isCmsMediaUrl, getPayloadClient } from '@/lib/payload'
 
 type PageProps = {
   params: Promise<{ slug: string }>
@@ -75,6 +75,7 @@ export default async function TopicPage({ params }: PageProps) {
             fill
             sizes="100vw"
             src={heroImage}
+            unoptimized={isCmsMediaUrl(heroImage)}
           />
         )}
         <div className="relative z-10 p-10 md:p-14">

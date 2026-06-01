@@ -11,7 +11,7 @@ import {
 import { CommentForm } from '@/components/comment/CommentForm'
 import { CommentList } from '@/components/comment/CommentList'
 import { fetchPublishedArticles } from '@/lib/articles'
-import { formatDate, getMediaUrl, getPayloadClient } from '@/lib/payload'
+import { formatDate, getMediaUrl, isCmsMediaUrl, getPayloadClient } from '@/lib/payload'
 
 type PageProps = {
   params: Promise<{ slug: string }>
@@ -111,6 +111,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                 priority
                 sizes="(max-width: 1024px) 100vw, 66vw"
                 src={heroImage}
+                unoptimized={isCmsMediaUrl(heroImage)}
               />
             </div>
           )}
