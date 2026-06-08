@@ -10,6 +10,7 @@
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev -p 3001",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:sitemap": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx/esm src/scripts/generate-sitemap.ts",
+    "sitemap:check": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx/esm src/scripts/check-and-update-sitemap.ts",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "seed:admin": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx/esm src/scripts/seed-admin.ts",
@@ -17,6 +18,7 @@
     "source-mapping:import": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx/esm src/scripts/import-source-mapping-to-cms.ts",
     "source-mapping:sync": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx/esm scripts/sync-source-mapping.mjs",
     "publish:category-batch": "node --env-file=.env scripts/publish-category-batch.mjs",
+    "publish:zhihu-xhs-batch": "node --env-file=.env scripts/publish-zhihu-xhs-batch.mjs",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
   },
   "dependencies": {

@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
-# Install weekly sitemap regeneration (Sunday 03:00 server local time).
+# Install daily sitemap check (03:00 server local time).
 set -euo pipefail
 
 APP_DIR="${1:-/var/www/mmhow/app}"
-CRON_CMD="0 3 * * 0 ${APP_DIR}/scripts/generate-sitemap-cron.sh"
+CRON_CMD="0 3 * * * ${APP_DIR}/scripts/generate-sitemap-cron.sh"
 
 chmod +x "${APP_DIR}/scripts/generate-sitemap-cron.sh"
 
-if crontab -l 2>/dev/null | grep -Fq 'generate-sitemap-cron.sh'; then
-  echo "Sitemap cron already installed."
-else
-  (crontab -l 2>/dev/null; echo "$CRON_CMD") | crontab -
-  echo "Installed weekly cron: $CRON_CMD"
-fi
+# Remove old weekly entry if present, then ensure daily entry exists.
+TMP="$(mktemp)"
+crontab -l 2>/dev/null | grep -Fv 'generate-sitemap-cron.sh' > "$TMP" || true
+echo "$CRON_CMD" >> "$TMP"
+crontab "$TMP"
+rm -f "$TMP"
+
+echo "Installed daily cron: $CRON_CMD"
 
 echo "Test run:"
 MMHOW_APP_DIR="$APP_DIR" bash "${APP_DIR}/scripts/generate-sitemap-cron.sh"
