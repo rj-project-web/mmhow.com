@@ -51,6 +51,26 @@ curl https://www.mmhow.com/api/agent/categories \
 | `topics` | | 专题 slug 数组 |
 | `slug` | | 自定义 URL slug |
 | `status` | | `published`（默认）或 `draft` |
+| `sourceUrl` | | 原文章网址（用于排重，并写入 `docs/source-mapping.csv`） |
+| `sourceTitle` | | 原文章标题（可选，参与排重） |
+| `sourcePlatform` | | 源平台名称（可选，如 `知乎`；不传则按 URL 自动识别） |
+| `skipSourceDedup` | | `true` 时跳过排重（仅特殊情况使用） |
+
+### 源站排重与对照表
+
+发布前会自动对照 `docs/source-mapping.csv` / `docs/source-mapping.xlsx` 与已发布文章：
+
+- **原网址** 重复 → `409 Conflict`
+- **原标题** 重复 → `409 Conflict`
+- **正文内容指纹** 重复 → `409 Conflict`
+
+发布成功（`status: published`）后，会自动追加或更新对照表一行（含 **发布时间**）。无原网址时可留空。
+
+手动全量同步（保留已有源站字段）：
+
+```bash
+npm run source-mapping:sync
+```
 
 ### 生产环境示例
 

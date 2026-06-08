@@ -5,6 +5,10 @@ import type { Payload, PayloadRequest } from 'payload'
 import { authenticateAgentRequest, AgentAuthError, AgentValidationError } from '@/lib/agent/auth'
 import { uploadImageFromUrl } from '@/lib/agent/media'
 import { buildArticleContent, excerptFromDescription } from '@/lib/agent/richtext'
+import {
+  appendSourceMappingRow,
+  findSourceDuplicate,
+} from '@/lib/agent/source-mapping'
 
 type ArticleBody = {
   title?: string
@@ -17,6 +21,10 @@ type ArticleBody = {
   slug?: string
   status?: 'published' | 'draft'
   topics?: string[]
+  sourceUrl?: string
+  sourceTitle?: string
+  sourcePlatform?: string
+  skipSourceDedup?: boolean
 }
 
 async function upsertArticle(
@@ -86,6 +94,27 @@ export async function POST(request: Request) {
 
     const status = body.status === 'draft' ? 'draft' : 'published'
     const images = body.images ?? []
+
+    if (!body.skipSourceDedup) {
+      const duplicate = await findSourceDuplicate(payload, {
+        sourceUrl: body.sourceUrl,
+        sourceTitle: body.sourceTitle,
+        description: body.description,
+        title: body.title,
+        slug: body.slug,
+      })
+
+      if (duplicate.duplicate) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: duplicate.reason,
+            duplicateOf: duplicate.existing,
+          },
+          { status: 409 },
+        )
+      }
+    }
 
     const { content, uploadedMediaIds } = await buildArticleContent({
       config,
@@ -167,6 +196,38 @@ export async function POST(request: Request) {
 
     const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001'
 
+    let sourceMappingUpdated = false
+    if (status === 'published') {
+      try {
+        const categoryDoc =
+          categoryId != null
+            ? (
+                await payload.findByID({
+                  collection: 'categories',
+                  id: categoryId,
+                })
+              ).name
+            : undefined
+
+        appendSourceMappingRow({
+          articleId: article.id,
+          title: article.title,
+          slug: article.slug,
+          categorySlug: body.category,
+          categoryName: categoryDoc,
+          sourceUrl: body.sourceUrl,
+          sourceTitle: body.sourceTitle,
+          sourcePlatform: body.sourcePlatform,
+          description: body.description,
+          publishedAt:
+            typeof article.publishedAt === 'string' ? article.publishedAt : new Date().toISOString(),
+        })
+        sourceMappingUpdated = true
+      } catch (mappingError) {
+        console.error('[agent/articles] source mapping update failed', mappingError)
+      }
+    }
+
     return NextResponse.json({
       success: true,
       article: {
@@ -177,6 +238,7 @@ export async function POST(request: Request) {
         url: `${serverUrl}/articles/${article.slug}`,
         adminUrl: `${serverUrl}/admin/collections/articles/${article.id}`,
       },
+      sourceMappingUpdated,
     })
   } catch (error) {
     if (error instanceof AgentAuthError || error instanceof AgentValidationError) {
@@ -207,7 +269,12 @@ export async function GET() {
       topics: 'string[] (optional) — topic slugs',
       slug: 'string (optional)',
       status: 'published | draft (default: published)',
+      sourceUrl: 'string (optional) — original article URL for dedup + docs/source-mapping',
+      sourceTitle: 'string (optional) — original article title',
+      sourcePlatform: 'string (optional) — e.g. 知乎 / 小红书 / 搜狐',
+      skipSourceDedup: 'boolean (optional) — bypass duplicate check (admin only use)',
     },
+    sourceMapping: 'docs/source-mapping.csv + docs/source-mapping.xlsx (auto-updated on publish)',
     categories: 'GET /api/agent/categories',
   })
 }
