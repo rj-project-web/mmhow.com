@@ -5,10 +5,7 @@ import type { Payload, PayloadRequest } from 'payload'
 import { authenticateAgentRequest, AgentAuthError, AgentValidationError } from '@/lib/agent/auth'
 import { uploadImageFromUrl } from '@/lib/agent/media'
 import { buildArticleContent, excerptFromDescription } from '@/lib/agent/richtext'
-import {
-  appendSourceMappingRow,
-  findSourceDuplicate,
-} from '@/lib/agent/source-mapping'
+import { buildArticleSourceFields, findSourceDuplicate } from '@/lib/agent/source-mapping'
 
 type ArticleBody = {
   title?: string
@@ -177,6 +174,13 @@ export async function POST(request: Request) {
     const toId = (id: number | string | undefined) =>
       id == null ? undefined : typeof id === 'number' ? id : Number(id)
 
+    const sourceFields = buildArticleSourceFields({
+      sourceUrl: body.sourceUrl,
+      sourceTitle: body.sourceTitle,
+      sourcePlatform: body.sourcePlatform,
+      description: body.description,
+    })
+
     const articleData = {
       title: body.title.trim(),
       slug: body.slug?.trim() || undefined,
@@ -187,6 +191,7 @@ export async function POST(request: Request) {
       topics: topicIds?.map((id) => toId(id) as number),
       _status: status as 'draft' | 'published',
       publishedAt: status === 'published' ? new Date().toISOString() : undefined,
+      ...sourceFields,
     }
 
     const article =
@@ -195,38 +200,6 @@ export async function POST(request: Request) {
         : await upsertArticle(payload, req, articleData, 'published')
 
     const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001'
-
-    let sourceMappingUpdated = false
-    if (status === 'published') {
-      try {
-        const categoryDoc =
-          categoryId != null
-            ? (
-                await payload.findByID({
-                  collection: 'categories',
-                  id: categoryId,
-                })
-              ).name
-            : undefined
-
-        appendSourceMappingRow({
-          articleId: article.id,
-          title: article.title,
-          slug: article.slug,
-          categorySlug: body.category,
-          categoryName: categoryDoc,
-          sourceUrl: body.sourceUrl,
-          sourceTitle: body.sourceTitle,
-          sourcePlatform: body.sourcePlatform,
-          description: body.description,
-          publishedAt:
-            typeof article.publishedAt === 'string' ? article.publishedAt : new Date().toISOString(),
-        })
-        sourceMappingUpdated = true
-      } catch (mappingError) {
-        console.error('[agent/articles] source mapping update failed', mappingError)
-      }
-    }
 
     return NextResponse.json({
       success: true,
@@ -237,8 +210,9 @@ export async function POST(request: Request) {
         status: article._status,
         url: `${serverUrl}/articles/${article.slug}`,
         adminUrl: `${serverUrl}/admin/collections/articles/${article.id}`,
+        sourceUrl: article.sourceUrl || sourceFields.sourceUrl,
+        sourcePlatform: article.sourcePlatform || sourceFields.sourcePlatform,
       },
-      sourceMappingUpdated,
     })
   } catch (error) {
     if (error instanceof AgentAuthError || error instanceof AgentValidationError) {
@@ -269,12 +243,13 @@ export async function GET() {
       topics: 'string[] (optional) — topic slugs',
       slug: 'string (optional)',
       status: 'published | draft (default: published)',
-      sourceUrl: 'string (optional) — original article URL for dedup + docs/source-mapping',
+      sourceUrl: 'string (optional) — original article URL (saved to CMS, used for dedup)',
       sourceTitle: 'string (optional) — original article title',
       sourcePlatform: 'string (optional) — e.g. 知乎 / 小红书 / 搜狐',
       skipSourceDedup: 'boolean (optional) — bypass duplicate check (admin only use)',
     },
-    sourceMapping: 'docs/source-mapping.csv + docs/source-mapping.xlsx (auto-updated on publish)',
+    sourceMapping:
+      'Stored in Payload Admin → Articles (sourceUrl, sourceTitle, sourcePlatform). Do NOT edit docs/source-mapping.xlsx.',
     categories: 'GET /api/agent/categories',
   })
 }

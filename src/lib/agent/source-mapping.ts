@@ -3,6 +3,8 @@ import { join } from 'node:path'
 
 import type { Payload } from 'payload'
 
+import type { Article } from '@/payload-types'
+
 export const SOURCE_MAPPING_HEADERS = [
   '分类',
   '分类（English）',
@@ -102,6 +104,138 @@ export function detectSourcePlatform(url?: string | null): string {
   }
 }
 
+export function buildArticleSourceFields(input: {
+  sourceUrl?: string
+  sourceTitle?: string
+  sourcePlatform?: string
+  description: string
+}) {
+  return {
+    sourceUrl: input.sourceUrl?.trim() || '',
+    sourceTitle: input.sourceTitle?.trim() || '',
+    sourcePlatform: input.sourcePlatform?.trim() || detectSourcePlatform(input.sourceUrl),
+    contentFingerprint: contentFingerprint(input.description),
+  }
+}
+
+function articleToMappingRow(article: Article, serverUrl: string): SourceMappingRow {
+  const category =
+    article.category && typeof article.category === 'object' ? article.category : null
+  const catSlug = category?.slug || ''
+  const catEn = category?.name || ''
+
+  return {
+    分类: CATEGORY_ZH[catSlug] || catEn,
+    '分类（English）': catEn,
+    源平台: article.sourcePlatform || '',
+    原网址: article.sourceUrl || '',
+    原标题: article.sourceTitle || '',
+    'MMHow 网址': `${serverUrl}/articles/${article.slug}`,
+    'MMHow 标题': article.title,
+    'MMHow ID': String(article.id),
+    内容指纹: article.contentFingerprint || '',
+    发布时间: formatPublishDate(article.publishedAt),
+  }
+}
+
+export type DuplicateCheckInput = {
+  sourceUrl?: string
+  sourceTitle?: string
+  description: string
+  title?: string
+  slug?: string
+}
+
+export type DuplicateCheckResult = {
+  duplicate: boolean
+  reason?: string
+  existing?: Partial<SourceMappingRow>
+}
+
+function mappingFromArticle(article: Article): Partial<SourceMappingRow> {
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://www.mmhow.com'
+  return {
+    'MMHow ID': String(article.id),
+    'MMHow 网址': `${serverUrl}/articles/${article.slug}`,
+    'MMHow 标题': article.title,
+    原网址: article.sourceUrl || '',
+    原标题: article.sourceTitle || '',
+    内容指纹: article.contentFingerprint || '',
+  }
+}
+
+export async function findSourceDuplicate(
+  payload: Payload,
+  input: DuplicateCheckInput,
+): Promise<DuplicateCheckResult> {
+  const normalizedUrl = normalizeSourceUrl(input.sourceUrl)
+  const fingerprint = contentFingerprint(input.description)
+  const normalizedSourceTitle = normalizeText(input.sourceTitle)
+  const normalizedTitle = normalizeText(input.title)
+
+  const { docs } = await payload.find({
+    collection: 'articles',
+    limit: 500,
+    depth: 0,
+    where: { _status: { equals: 'published' } },
+  })
+
+  for (const article of docs) {
+    if (input.slug && article.slug === input.slug) continue
+
+    if (normalizedUrl && normalizeSourceUrl(article.sourceUrl) === normalizedUrl) {
+      return {
+        duplicate: true,
+        reason: `Source URL already mapped to MMHow article #${article.id}`,
+        existing: mappingFromArticle(article),
+      }
+    }
+
+    if (
+      fingerprint &&
+      article.contentFingerprint &&
+      article.contentFingerprint === fingerprint
+    ) {
+      return {
+        duplicate: true,
+        reason: `Article body matches existing article #${article.id} (content fingerprint)`,
+        existing: mappingFromArticle(article),
+      }
+    }
+
+    if (
+      normalizedSourceTitle &&
+      normalizeText(article.sourceTitle) === normalizedSourceTitle
+    ) {
+      return {
+        duplicate: true,
+        reason: `Source title already mapped to MMHow article #${article.id}`,
+        existing: mappingFromArticle(article),
+      }
+    }
+
+    const articleFingerprint = contentFingerprint(article.excerpt || article.title)
+    if (fingerprint && articleFingerprint === fingerprint) {
+      return {
+        duplicate: true,
+        reason: `Article body is too similar to published article #${article.id} (${article.slug})`,
+        existing: mappingFromArticle(article),
+      }
+    }
+
+    if (normalizedTitle && normalizeText(article.title) === normalizedTitle) {
+      return {
+        duplicate: true,
+        reason: `MMHow title already used by article #${article.id}`,
+        existing: mappingFromArticle(article),
+      }
+    }
+  }
+
+  return { duplicate: false }
+}
+
+/** @deprecated Legacy CSV read — use CMS Articles fields instead. */
 function parseCsvLine(line: string): string[] {
   const cols: string[] = []
   let cur = ''
@@ -128,10 +262,7 @@ function parseCsvLine(line: string): string[] {
   return cols
 }
 
-function escapeCsv(value: string): string {
-  return `"${String(value ?? '').replace(/"/g, '""')}"`
-}
-
+/** @deprecated Legacy CSV read — use CMS Articles fields instead. */
 export function readSourceMappingRows(): SourceMappingRow[] {
   const { csv } = mappingPaths()
   if (!existsSync(csv)) return []
@@ -151,173 +282,43 @@ export function readSourceMappingRows(): SourceMappingRow[] {
   })
 }
 
-export function writeSourceMappingRows(rows: SourceMappingRow[]) {
+function escapeCsv(value: string): string {
+  return `"${String(value ?? '').replace(/"/g, '""')}"`
+}
+
+/** Export CMS articles to CSV/XLSX for backup only — not the source of truth. */
+export async function exportSourceMappingFiles(payload: Payload) {
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://www.mmhow.com'
+  const { docs } = await payload.find({
+    collection: 'articles',
+    limit: 500,
+    depth: 1,
+    sort: 'id',
+    where: { _status: { equals: 'published' } },
+  })
+
+  const rows = docs.map((article) => articleToMappingRow(article, serverUrl))
   const { csv, xlsx } = mappingPaths()
-  const sorted = [...rows].sort((a, b) => Number(a['MMHow ID'] || 0) - Number(b['MMHow ID'] || 0))
+
   const csvBody = [
     SOURCE_MAPPING_HEADERS.join(','),
-    ...sorted.map((row) => SOURCE_MAPPING_HEADERS.map((h) => escapeCsv(row[h] ?? '')).join(',')),
+    ...rows.map((row) => SOURCE_MAPPING_HEADERS.map((h) => escapeCsv(row[h] ?? '')).join(',')),
   ].join('\n')
   writeFileSync(csv, `\uFEFF${csvBody}`, 'utf8')
 
   try {
-    // Optional runtime dependency for xlsx sync.
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const XLSX = require('xlsx') as typeof import('xlsx')
     const sheet = XLSX.utils.json_to_sheet(
-      sorted.map((row) => Object.fromEntries(SOURCE_MAPPING_HEADERS.map((h) => [h, row[h] ?? '']))),
+      rows.map((row) => Object.fromEntries(SOURCE_MAPPING_HEADERS.map((h) => [h, row[h] ?? '']))),
       { header: [...SOURCE_MAPPING_HEADERS] },
     )
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, sheet, '源站-MMHow对照')
     XLSX.writeFile(wb, xlsx)
   } catch {
-    // CSV remains source of truth when xlsx package is unavailable.
-  }
-}
-
-export type DuplicateCheckInput = {
-  sourceUrl?: string
-  sourceTitle?: string
-  description: string
-  title?: string
-  slug?: string
-}
-
-export type DuplicateCheckResult = {
-  duplicate: boolean
-  reason?: string
-  existing?: Partial<SourceMappingRow>
-}
-
-export async function findSourceDuplicate(
-  payload: Payload,
-  input: DuplicateCheckInput,
-): Promise<DuplicateCheckResult> {
-  const rows = readSourceMappingRows()
-  const normalizedUrl = normalizeSourceUrl(input.sourceUrl)
-  const fingerprint = contentFingerprint(input.description)
-  const normalizedSourceTitle = normalizeText(input.sourceTitle)
-  const normalizedTitle = normalizeText(input.title)
-
-  const sameSlug = (row: SourceMappingRow) =>
-    Boolean(input.slug && row['MMHow 网址'].endsWith(`/articles/${input.slug}`))
-
-  if (normalizedUrl) {
-    const hit = rows.find(
-      (row) => normalizeSourceUrl(row['原网址']) === normalizedUrl && !sameSlug(row),
-    )
-    if (hit) {
-      return {
-        duplicate: true,
-        reason: `Source URL already mapped to MMHow article #${hit['MMHow ID']}`,
-        existing: hit,
-      }
-    }
+    // CSV export is enough when xlsx is unavailable.
   }
 
-  if (fingerprint) {
-    const hit = rows.find(
-      (row) => row['内容指纹'] && row['内容指纹'] === fingerprint && !sameSlug(row),
-    )
-    if (hit) {
-      return {
-        duplicate: true,
-        reason: `Article body matches existing mapping #${hit['MMHow ID']} (content fingerprint)`,
-        existing: hit,
-      }
-    }
-  }
-
-  if (normalizedSourceTitle) {
-    const hit = rows.find(
-      (row) => normalizeText(row['原标题']) === normalizedSourceTitle && !sameSlug(row),
-    )
-    if (hit) {
-      return {
-        duplicate: true,
-        reason: `Source title already mapped to MMHow article #${hit['MMHow ID']}`,
-        existing: hit,
-      }
-    }
-  }
-
-  const { docs } = await payload.find({
-    collection: 'articles',
-    limit: 200,
-    depth: 0,
-    where: { _status: { equals: 'published' } },
-  })
-
-  for (const article of docs) {
-    if (input.slug && article.slug === input.slug) continue
-    const articleFingerprint = contentFingerprint(article.excerpt || article.title)
-    if (fingerprint && articleFingerprint === fingerprint) {
-      return {
-        duplicate: true,
-        reason: `Article body is too similar to published article #${article.id} (${article.slug})`,
-        existing: {
-          'MMHow ID': String(article.id),
-          'MMHow 网址': `${process.env.NEXT_PUBLIC_SERVER_URL || 'https://www.mmhow.com'}/articles/${article.slug}`,
-          'MMHow 标题': article.title,
-        },
-      }
-    }
-    if (normalizedTitle && normalizeText(article.title) === normalizedTitle) {
-      return {
-        duplicate: true,
-        reason: `MMHow title already used by article #${article.id}`,
-        existing: {
-          'MMHow ID': String(article.id),
-          'MMHow 网址': `${process.env.NEXT_PUBLIC_SERVER_URL || 'https://www.mmhow.com'}/articles/${article.slug}`,
-          'MMHow 标题': article.title,
-        },
-      }
-    }
-  }
-
-  return { duplicate: false }
-}
-
-export function appendSourceMappingRow(input: {
-  articleId: number | string
-  title: string
-  slug: string
-  categorySlug?: string
-  categoryName?: string
-  sourceUrl?: string
-  sourceTitle?: string
-  sourcePlatform?: string
-  description: string
-  publishedAt?: string
-}) {
-  const rows = readSourceMappingRows()
-  const id = String(input.articleId)
-  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'https://www.mmhow.com'
-  const mmhowUrl = `${serverUrl}/articles/${input.slug}`
-  const categoryEn = input.categoryName || ''
-  const categoryZh = (input.categorySlug && CATEGORY_ZH[input.categorySlug]) || categoryEn
-
-  const nextRow: SourceMappingRow = {
-    分类: categoryZh,
-    '分类（English）': categoryEn,
-    源平台: input.sourcePlatform || detectSourcePlatform(input.sourceUrl),
-    原网址: input.sourceUrl?.trim() || '',
-    原标题: input.sourceTitle?.trim() || '',
-    'MMHow 网址': mmhowUrl,
-    'MMHow 标题': input.title,
-    'MMHow ID': id,
-    内容指纹: contentFingerprint(input.description),
-    发布时间: formatPublishDate(input.publishedAt),
-  }
-
-  const index = rows.findIndex((row) => row['MMHow ID'] === id || row['MMHow 网址'] === mmhowUrl)
-  if (index >= 0) {
-    rows[index] = { ...rows[index], ...nextRow }
-  } else {
-    rows.push(nextRow)
-  }
-
-  writeSourceMappingRows(rows)
-  return nextRow
+  return rows.length
 }

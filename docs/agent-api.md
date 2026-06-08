@@ -51,25 +51,35 @@ curl https://www.mmhow.com/api/agent/categories \
 | `topics` | | 专题 slug 数组 |
 | `slug` | | 自定义 URL slug |
 | `status` | | `published`（默认）或 `draft` |
-| `sourceUrl` | | 原文章网址（用于排重，并写入 `docs/source-mapping.csv`） |
+| `sourceUrl` | | 原文章网址（写入 CMS，用于排重） |
 | `sourceTitle` | | 原文章标题（可选，参与排重） |
 | `sourcePlatform` | | 源平台名称（可选，如 `知乎`；不传则按 URL 自动识别） |
 | `skipSourceDedup` | | `true` 时跳过排重（仅特殊情况使用） |
 
 ### 源站排重与对照表
 
-发布前会自动对照 `docs/source-mapping.csv` / `docs/source-mapping.xlsx` 与已发布文章：
+**数据源：Payload 管理后台 → Articles**（侧栏：源平台 / 原网址 / 原标题 / 内容指纹）。
+
+内容编辑 Agent **不要**再维护 `docs/source-mapping.xlsx`。详见 [content-editor-agent.md](./content-editor-agent.md)。
+
+发布前会自动对照 CMS 中已发布文章的源站字段：
 
 - **原网址** 重复 → `409 Conflict`
 - **原标题** 重复 → `409 Conflict`
 - **正文内容指纹** 重复 → `409 Conflict`
 
-发布成功（`status: published`）后，会自动追加或更新对照表一行（含 **发布时间**）。无原网址时可留空。
+发布成功（`status: published`）后，源站字段写入该文章记录。无原网址时可留空。
 
-手动全量同步（保留已有源站字段）：
+从 CMS 导出备份到 Excel/CSV（可选，勿手改导出文件）：
 
 ```bash
 npm run source-mapping:sync
+```
+
+一次性从旧 CSV 导入 CMS（迁移用）：
+
+```bash
+npm run source-mapping:import
 ```
 
 ### 生产环境示例
@@ -143,5 +153,7 @@ curl https://www.mmhow.com/api/agent/articles
 - POST https://www.mmhow.com/api/agent/articles
 - Header: Authorization: users API-Key {API_KEY}
 - Body JSON: title, description (markdown), optional featuredImage, images[], category (slug)
+- 有来源时必传 sourceUrl、sourceTitle（写入 Admin，不要改 source-mapping.xlsx）
 - 发前先 GET https://www.mmhow.com/api/agent/categories 确认分类 slug
+- 完整说明见仓库 docs/content-editor-agent.md
 ```
