@@ -68,11 +68,16 @@ export const Articles: CollectionConfig = {
     {
       name: 'publishedAt',
       type: 'date',
+      label: 'Published At',
       admin: {
         date: {
           pickerAppearance: 'dayAndTime',
         },
         position: 'sidebar',
+        description: '格式：2026-06-07 15:30（年-月-日 时:分）',
+        components: {
+          Cell: '@/components/admin/PublishedAtCell#PublishedAtCell',
+        },
       },
       hooks: {
         beforeChange: [

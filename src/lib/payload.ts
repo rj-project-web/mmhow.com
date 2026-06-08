@@ -1,19 +1,16 @@
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
+import { formatDateTime } from '@/lib/datetime'
+
 export async function getPayloadClient() {
   const config = await configPromise
   return getPayload({ config })
 }
 
+/** Published At / comment dates: `2026-06-07 15:30` */
 export function formatDate(value?: string | null) {
-  if (!value) return ''
-
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(new Date(value))
+  return formatDateTime(value)
 }
 
 export function getMediaUrl(url?: string | null) {

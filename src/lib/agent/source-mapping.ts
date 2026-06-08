@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import type { Payload } from 'payload'
 
 import type { Article } from '@/payload-types'
+import { formatDateTime } from '@/lib/datetime'
 
 export const SOURCE_MAPPING_HEADERS = [
   '分类',
@@ -34,10 +35,7 @@ const CATEGORY_ZH: Record<string, string> = {
 }
 
 function formatPublishDate(iso?: string | null): string {
-  if (!iso?.trim()) return ''
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return iso.trim()
-  return d.toISOString().slice(0, 10)
+  return formatDateTime(iso)
 }
 
 function mappingPaths() {
