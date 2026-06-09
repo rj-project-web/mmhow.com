@@ -1,9 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-/** Source asset dimensions (public/mmhow-logo.png) */
-const LOGO_WIDTH = 951
-const LOGO_HEIGHT = 354
+/** Source asset dimensions (public/mmhow-logo.png, ~29KB) */
+const LOGO_WIDTH = 380
+const LOGO_HEIGHT = 141
 
 type SiteLogoProps = {
   /** Tailwind height class, e.g. h-[72px] */
