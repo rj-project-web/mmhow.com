@@ -1,0 +1,21 @@
+{
+  "name": "MMHow",
+  "short_name": "MMHow",
+  "description": "How to make money: side hustles, online income, and investing",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#0f4c81",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "start_url": "/"
+}
