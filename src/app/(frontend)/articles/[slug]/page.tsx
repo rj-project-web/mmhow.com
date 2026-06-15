@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { ArticleContent } from '@/components/article/ArticleContent'
+import { InvestmentDisclaimer } from '@/components/article/InvestmentDisclaimer'
 import {
   ArticleSidebar,
   ContinueReading,
@@ -11,7 +12,13 @@ import {
 import { CommentForm } from '@/components/comment/CommentForm'
 import { CommentList } from '@/components/comment/CommentList'
 import { fetchPublishedArticles } from '@/lib/articles'
-import { formatDate, getMediaUrl, isCmsMediaUrl, getPayloadClient } from '@/lib/payload'
+import { formatDate, getPayloadClient, isCmsMediaUrl } from '@/lib/payload'
+import {
+  buildArticleJsonLd,
+  buildArticleMetadata,
+  featuredImageAlt,
+  resolveFeaturedImageUrl,
+} from '@/lib/seo/article-metadata'
 
 type PageProps = {
   params: Promise<{ slug: string }>
@@ -22,6 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'articles',
+    depth: 1,
     limit: 1,
     where: { slug: { equals: slug } },
   })
@@ -29,10 +37,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const article = docs[0]
   if (!article) return { title: 'Article Not Found' }
 
-  return {
+  const categoryName =
+    article.category && typeof article.category === 'object' ? article.category.name : null
+
+  return buildArticleMetadata({
     title: article.title,
-    description: article.excerpt,
-  }
+    slug: article.slug,
+    excerpt: article.excerpt,
+    publishedAt: article.publishedAt,
+    updatedAt: article.updatedAt,
+    featuredImageUrl: resolveFeaturedImageUrl(article.featuredImage),
+    categoryName,
+  })
 }
 
 export default async function ArticleDetailPage({ params }: PageProps) {
@@ -63,10 +79,13 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     },
   })
 
-  const heroImage =
-    article.featuredImage && typeof article.featuredImage === 'object'
-      ? getMediaUrl(article.featuredImage.url)
-      : null
+  const categoryName =
+    article.category && typeof article.category === 'object' ? article.category.name : null
+  const categorySlug =
+    article.category && typeof article.category === 'object' ? article.category.slug : null
+
+  const heroImage = resolveFeaturedImageUrl(article.featuredImage)
+  const heroAlt = featuredImageAlt(article.title, categoryName)
 
   const categoryId =
     article.category && typeof article.category === 'object' ? article.category.id : undefined
@@ -83,8 +102,24 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     }),
   ])
 
+  const jsonLd = buildArticleJsonLd({
+    title: article.title,
+    slug: article.slug,
+    excerpt: article.excerpt,
+    publishedAt: article.publishedAt,
+    updatedAt: article.updatedAt,
+    featuredImageUrl: heroImage,
+    categoryName,
+  })
+
+  const showInvestmentDisclaimer = categorySlug === 'investment--passive-income'
+
   return (
     <main className="mx-auto flex w-full max-w-container-max flex-grow flex-col gap-ad-clearance px-margin-mobile py-ad-clearance md:px-margin-desktop">
+      <script
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        type="application/ld+json"
+      />
       <article className="grid grid-cols-1 gap-gutter lg:grid-cols-12">
         <div className="flex flex-col gap-6 lg:col-span-8">
           <div className="flex flex-wrap items-center gap-3 font-label-md text-label-md text-on-surface-variant">
@@ -102,10 +137,12 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
           <p className="font-body-lg text-body-lg text-on-surface-variant">{article.excerpt}</p>
 
+          {showInvestmentDisclaimer && <InvestmentDisclaimer />}
+
           {heroImage && (
             <div className="relative aspect-[16/9] overflow-hidden rounded-xl shadow-sm shadow-slate-200/40">
               <Image
-                alt={article.title}
+                alt={heroAlt}
                 className="object-cover"
                 fill
                 priority
@@ -116,9 +153,9 @@ export default async function ArticleDetailPage({ params }: PageProps) {
             </div>
           )}
 
-          <ContinueReading articles={relatedInCategory} />
-
           <ArticleContent content={article.content} />
+
+          <ContinueReading articles={relatedInCategory} />
 
           {Array.isArray(article.topics) && article.topics.length > 0 && (
             <div className="flex flex-wrap gap-2 border-t border-outline pt-6">
