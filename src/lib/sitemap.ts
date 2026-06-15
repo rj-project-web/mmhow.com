@@ -161,7 +161,11 @@ export async function generateSitemap(): Promise<SitemapGenerateResult> {
   const robotsPath = path.join(rootDir, 'public/robots.txt')
 
   writeFileSync(sitemapPath, buildSitemapXml(entries), 'utf8')
-  writeFileSync(robotsPath, `User-agent: *\nAllow: /\n\nSitemap: ${baseUrl}/sitemap.xml\n`, 'utf8')
+  writeFileSync(
+    robotsPath,
+    `User-agent: *\nAllow: /\n\n# Block Next.js RSC prefetch URLs (duplicate of clean pages)\nDisallow: /*_rsc=\n\nSitemap: ${baseUrl}/sitemap.xml\n`,
+    'utf8',
+  )
 
   return {
     sitemapPath,

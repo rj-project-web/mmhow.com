@@ -5,6 +5,7 @@ import React from 'react'
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { getAllCategories } from '@/lib/categories'
+import { getSiteUrl } from '@/lib/site-url'
 import '@/styles/globals.css'
 
 export const dynamic = 'force-dynamic'
@@ -20,6 +21,7 @@ const sourceSerif = Source_Serif_4({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default: 'MMHow — How to Make Money',
     template: '%s | MMHow',

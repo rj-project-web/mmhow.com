@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: 'About Us',
   description:
     'MMHow helps you discover practical ways to make money online — side hustles, freelancing, investing, and passive income.',
+  alternates: {
+    canonical: '/about',
+  },
 }
 
 export default function AboutPage() {

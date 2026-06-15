@@ -30,6 +30,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: topic.name,
     description: topic.description || `Curated articles about ${topic.name}`,
+    alternates: {
+      canonical: `/topic/${topic.slug}`,
+    },
   }
 }
 

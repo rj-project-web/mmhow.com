@@ -25,6 +25,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: category.name,
     description: category.description || `Articles in ${category.name}`,
+    alternates: {
+      canonical: `/category/${category.slug}`,
+    },
   }
 }
 

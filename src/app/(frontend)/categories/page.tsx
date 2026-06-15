@@ -10,6 +10,9 @@ import { getPayloadClient } from '@/lib/payload'
 export const metadata: Metadata = {
   title: 'Categories',
   description: 'Browse ways to make money — side hustles, freelancing, e-commerce, investing, and more.',
+  alternates: {
+    canonical: '/categories',
+  },
 }
 
 export default async function CategoriesIndexPage() {

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Lightbulb, TrendingUp } from 'lucide-react'
@@ -11,6 +12,12 @@ import { CategoriesGrid } from '@/components/category/CategoriesGrid'
 import { toArticleSummary } from '@/lib/articles'
 import { getAllCategories } from '@/lib/categories'
 import { getPayloadClient } from '@/lib/payload'
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: '/',
+  },
+}
 
 export default async function HomePage() {
   const payload = await getPayloadClient()

@@ -6,6 +6,9 @@ import { LegalPage } from '@/components/layout/LegalPage'
 export const metadata: Metadata = {
   title: 'Terms of Service',
   description: 'Terms of Service for MMHow.com — rules for using our website and content.',
+  alternates: {
+    canonical: '/terms',
+  },
 }
 
 export default function TermsPage() {

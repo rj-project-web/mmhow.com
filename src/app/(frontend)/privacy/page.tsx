@@ -6,6 +6,9 @@ import { LegalPage } from '@/components/layout/LegalPage'
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description: 'Privacy Policy for MMHow.com — how we collect, use, and protect your information.',
+  alternates: {
+    canonical: '/privacy',
+  },
 }
 
 export default function PrivacyPage() {
