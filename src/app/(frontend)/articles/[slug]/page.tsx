@@ -19,6 +19,12 @@ import {
   featuredImageAlt,
   resolveFeaturedImageUrl,
 } from '@/lib/seo/article-metadata'
+import {
+  buildBreadcrumbJsonLd,
+  buildFaqJsonLd,
+  extractFaqEntries,
+} from '@/lib/seo/structured-data'
+import { absoluteUrl, getSiteUrl } from '@/lib/site-url'
 
 type PageProps = {
   params: Promise<{ slug: string }>
@@ -112,6 +118,16 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     categoryName,
   })
 
+  const breadcrumbItems = [{ name: 'Home', url: getSiteUrl() }]
+  if (categoryName && categorySlug) {
+    breadcrumbItems.push({ name: categoryName, url: absoluteUrl(`/category/${categorySlug}`) })
+  }
+  breadcrumbItems.push({ name: article.title, url: absoluteUrl(`/articles/${article.slug}`) })
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd(breadcrumbItems)
+
+  const faqEntries = extractFaqEntries(article.content)
+  const faqJsonLd = faqEntries.length > 0 ? buildFaqJsonLd(faqEntries) : null
+
   const showInvestmentDisclaimer = categorySlug === 'investment--passive-income'
 
   return (
@@ -120,6 +136,16 @@ export default async function ArticleDetailPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         type="application/ld+json"
       />
+      <script
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        type="application/ld+json"
+      />
+      {faqJsonLd && (
+        <script
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+          type="application/ld+json"
+        />
+      )}
       <article className="grid grid-cols-1 gap-gutter lg:grid-cols-12">
         <div className="flex flex-col gap-6 lg:col-span-8">
           <div className="flex flex-wrap items-center gap-3 font-label-md text-label-md text-on-surface-variant">

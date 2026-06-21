@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { absoluteUrl, getSiteUrl } from '@/lib/site-url'
 import { getMediaUrl } from '@/lib/payload'
+import { publisherJsonLd } from '@/lib/seo/structured-data'
 
 type ArticleSeoInput = {
   title: string
@@ -77,11 +78,7 @@ export function buildArticleJsonLd(article: ArticleSeoInput) {
       name: 'MMHow',
       url: getSiteUrl(),
     },
-    publisher: {
-      '@type': 'Organization',
-      name: 'MMHow',
-      url: getSiteUrl(),
-    },
+    publisher: publisherJsonLd(),
     ...(article.categoryName
       ? {
           articleSection: article.categoryName,

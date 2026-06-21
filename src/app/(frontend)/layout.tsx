@@ -5,6 +5,7 @@ import React from 'react'
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { getAllCategories } from '@/lib/categories'
+import { buildOrganizationJsonLd, buildWebSiteJsonLd } from '@/lib/seo/structured-data'
 import { getSiteUrl } from '@/lib/site-url'
 import '@/styles/globals.css'
 
@@ -41,6 +42,13 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const categories = await getAllCategories()
+  const siteJsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      { ...buildOrganizationJsonLd(), '@context': undefined },
+      { ...buildWebSiteJsonLd(), '@context': undefined },
+    ],
+  }
 
   return (
     <html className={`${sourceSans.variable} ${sourceSerif.variable}`} lang="en">
@@ -48,6 +56,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
           rel="stylesheet"
+        />
+        <script
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
+          type="application/ld+json"
         />
       </head>
       <body className="flex min-h-screen flex-col">

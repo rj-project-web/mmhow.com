@@ -5,6 +5,8 @@ import { ArticleCard, SectionHeading } from '@/components/article/ArticleCard'
 import { ArticlePickStrip } from '@/components/article/ArticleRecommendations'
 import { toArticleSummary } from '@/lib/articles'
 import { getPayloadClient } from '@/lib/payload'
+import { buildBreadcrumbJsonLd } from '@/lib/seo/structured-data'
+import { absoluteUrl, getSiteUrl } from '@/lib/site-url'
 
 type PageProps = {
   params: Promise<{ slug: string }>
@@ -57,8 +59,18 @@ export default async function CategoryPage({ params }: PageProps) {
     },
   })
 
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: 'Home', url: getSiteUrl() },
+    { name: 'Categories', url: absoluteUrl('/categories') },
+    { name: category.name, url: absoluteUrl(`/category/${category.slug}`) },
+  ])
+
   return (
     <main className="mx-auto flex w-full max-w-container-max flex-grow flex-col gap-ad-clearance px-margin-mobile py-ad-clearance md:px-margin-desktop">
+      <script
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        type="application/ld+json"
+      />
       <section className="card-fintech p-10">
         <span className="mb-3 block font-label-md text-label-md uppercase tracking-widest text-primary">
           Category
