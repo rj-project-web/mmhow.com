@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 
 import { ArticleContent } from '@/components/article/ArticleContent'
 import { InvestmentDisclaimer } from '@/components/article/InvestmentDisclaimer'
+import { KeyTakeaways } from '@/components/article/KeyTakeaways'
 import {
   ArticleSidebar,
   ContinueReading,
@@ -128,6 +129,16 @@ export default async function ArticleDetailPage({ params }: PageProps) {
   const faqEntries = extractFaqEntries(article.content)
   const faqJsonLd = faqEntries.length > 0 ? buildFaqJsonLd(faqEntries) : null
 
+  const keyTakeaways = Array.isArray(article.keyTakeaways)
+    ? article.keyTakeaways
+        .map((item) =>
+          item && typeof item === 'object' && typeof item.point === 'string'
+            ? item.point.trim()
+            : '',
+        )
+        .filter((point): point is string => point.length > 0)
+    : []
+
   const showInvestmentDisclaimer = categorySlug === 'investment--passive-income'
 
   return (
@@ -162,6 +173,8 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           </h1>
 
           <p className="font-body-lg text-body-lg text-on-surface-variant">{article.excerpt}</p>
+
+          {keyTakeaways.length > 0 && <KeyTakeaways points={keyTakeaways} />}
 
           {showInvestmentDisclaimer && <InvestmentDisclaimer />}
 

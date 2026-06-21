@@ -38,6 +38,21 @@ export const Articles: CollectionConfig = {
       required: true,
     },
     {
+      name: 'keyTakeaways',
+      type: 'array',
+      label: 'Key Takeaways（顶部要点）',
+      admin: {
+        description: '3–5 条核心要点，显示在文章顶部，利于 SEO 与 Google AI Overviews 抽取。可留空。',
+      },
+      fields: [
+        {
+          name: 'point',
+          type: 'text',
+          required: true,
+        },
+      ],
+    },
+    {
       name: 'featuredImage',
       type: 'upload',
       relationTo: 'media',

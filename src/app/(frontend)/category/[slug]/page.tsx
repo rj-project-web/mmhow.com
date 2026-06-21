@@ -5,7 +5,7 @@ import { ArticleCard, SectionHeading } from '@/components/article/ArticleCard'
 import { ArticlePickStrip } from '@/components/article/ArticleRecommendations'
 import { toArticleSummary } from '@/lib/articles'
 import { getPayloadClient } from '@/lib/payload'
-import { buildBreadcrumbJsonLd } from '@/lib/seo/structured-data'
+import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd } from '@/lib/seo/structured-data'
 import { absoluteUrl, getSiteUrl } from '@/lib/site-url'
 
 type PageProps = {
@@ -59,16 +59,31 @@ export default async function CategoryPage({ params }: PageProps) {
     },
   })
 
+  const categoryUrl = absoluteUrl(`/category/${category.slug}`)
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: 'Home', url: getSiteUrl() },
     { name: 'Categories', url: absoluteUrl('/categories') },
-    { name: category.name, url: absoluteUrl(`/category/${category.slug}`) },
+    { name: category.name, url: categoryUrl },
   ])
+
+  const collectionJsonLd = buildCollectionPageJsonLd({
+    name: category.name,
+    url: categoryUrl,
+    description: category.description,
+    items: articles.map((article) => ({
+      name: article.title,
+      url: absoluteUrl(`/articles/${article.slug}`),
+    })),
+  })
 
   return (
     <main className="mx-auto flex w-full max-w-container-max flex-grow flex-col gap-ad-clearance px-margin-mobile py-ad-clearance md:px-margin-desktop">
       <script
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        type="application/ld+json"
+      />
+      <script
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
         type="application/ld+json"
       />
       <section className="card-fintech p-10">

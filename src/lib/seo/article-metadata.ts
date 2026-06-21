@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 import { absoluteUrl, getSiteUrl } from '@/lib/site-url'
 import { getMediaUrl } from '@/lib/payload'
-import { publisherJsonLd } from '@/lib/seo/structured-data'
+import { ORGANIZATION_ID, publisherJsonLd } from '@/lib/seo/structured-data'
 
 type ArticleSeoInput = {
   title: string
@@ -14,10 +14,14 @@ type ArticleSeoInput = {
   categoryName?: string | null
 }
 
+const DEFAULT_OG_IMAGE = '/og-default.png'
+
 export function buildArticleMetadata(article: ArticleSeoInput): Metadata {
   const url = absoluteUrl(`/articles/${article.slug}`)
   const description = article.excerpt?.trim() || undefined
-  const image = article.featuredImageUrl ? absoluteUrl(article.featuredImageUrl) : undefined
+  const image = article.featuredImageUrl
+    ? absoluteUrl(article.featuredImageUrl)
+    : absoluteUrl(DEFAULT_OG_IMAGE)
 
   return {
     title: article.title,
@@ -32,26 +36,22 @@ export function buildArticleMetadata(article: ArticleSeoInput): Metadata {
       description,
       siteName: 'MMHow',
       locale: 'en_US',
-      ...(image
-        ? {
-            images: [
-              {
-                url: image,
-                width: 1200,
-                height: 630,
-                alt: article.title,
-              },
-            ],
-          }
-        : {}),
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: article.title,
+        },
+      ],
       ...(article.publishedAt ? { publishedTime: article.publishedAt } : {}),
       ...(article.updatedAt ? { modifiedTime: article.updatedAt } : {}),
     },
     twitter: {
-      card: image ? 'summary_large_image' : 'summary',
+      card: 'summary_large_image',
       title: article.title,
       description,
-      ...(image ? { images: [image] } : {}),
+      images: [image],
     },
   }
 }
@@ -75,10 +75,12 @@ export function buildArticleJsonLd(article: ArticleSeoInput) {
     ...(article.updatedAt ? { dateModified: article.updatedAt } : {}),
     author: {
       '@type': 'Organization',
+      '@id': ORGANIZATION_ID,
       name: 'MMHow',
       url: getSiteUrl(),
     },
     publisher: publisherJsonLd(),
+    inLanguage: 'en-US',
     ...(article.categoryName
       ? {
           articleSection: article.categoryName,

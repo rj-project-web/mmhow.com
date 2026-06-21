@@ -3,6 +3,18 @@ import { absoluteUrl, getSiteUrl } from '@/lib/site-url'
 const ORG_DESCRIPTION =
   'MMHow publishes practical, no-hype guides on side hustles, online income, freelancing, e-commerce, and investing.'
 
+const ORG_KNOWS_ABOUT = [
+  'Side hustles',
+  'Online income',
+  'Freelancing',
+  'Dropshipping',
+  'E-commerce',
+  'Passive income',
+  'Index fund investing',
+  'Content creator monetization',
+  'AI tools for making money',
+]
+
 export const ORGANIZATION_ID = `${getSiteUrl()}/#organization`
 export const WEBSITE_ID = `${getSiteUrl()}/#website`
 
@@ -24,7 +36,9 @@ export function buildOrganizationJsonLd() {
     name: 'MMHow',
     url: getSiteUrl(),
     logo: organizationLogo(),
+    image: organizationLogo(),
     description: ORG_DESCRIPTION,
+    knowsAbout: ORG_KNOWS_ABOUT,
   }
 }
 
@@ -50,6 +64,35 @@ export function publisherJsonLd() {
     name: 'MMHow',
     url: getSiteUrl(),
     logo: organizationLogo(),
+  }
+}
+
+export type CollectionListItem = { name: string; url: string }
+
+/** CollectionPage + embedded ItemList for category/listing pages. */
+export function buildCollectionPageJsonLd(input: {
+  name: string
+  url: string
+  description?: string | null
+  items: CollectionListItem[]
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: input.name,
+    url: input.url,
+    ...(input.description ? { description: input.description } : {}),
+    isPartOf: { '@id': WEBSITE_ID },
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: input.items.length,
+      itemListElement: input.items.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        url: item.url,
+        name: item.name,
+      })),
+    },
   }
 }
 
