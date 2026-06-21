@@ -18,8 +18,21 @@
     "source-mapping:import": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx/esm src/scripts/import-source-mapping-to-cms.ts",
     "source-mapping:sync": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx/esm scripts/sync-source-mapping.mjs",
     "publish:category-batch": "node --env-file=.env scripts/publish-category-batch.mjs",
+    "publish:category-batch-8": "node --env-file=.env scripts/publish-category-batch-8.mjs",
+    "publish:category-batch-10": "node --env-file=.env scripts/publish-category-batch-10.mjs",
+    "publish:category-batch-11": "node --env-file=.env scripts/publish-category-batch-11.mjs",
+    "publish:category-batch-12": "node --env-file=.env scripts/publish-category-batch-12.mjs",
+    "publish:category-batch-13": "node --env-file=.env scripts/publish-category-batch-13.mjs",
+    "publish:category-batch-14": "node --env-file=.env scripts/publish-category-batch-14.mjs",
+    "publish:category-batch-15": "node --env-file=.env scripts/publish-category-batch-15.mjs",
+    "publish:category-batch-16": "node --env-file=.env scripts/publish-category-batch-16.mjs",
+    "publish:category-batch-17": "node --env-file=.env scripts/publish-category-batch-17.mjs",
     "publish:zhihu-xhs-batch": "node --env-file=.env scripts/publish-zhihu-xhs-batch.mjs",
-    "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
+    "keywords:export": "node --env-file=.env scripts/export-keyword-search-sheet.mjs",
+    "articles:seo-batch": "node --env-file=.env scripts/batch-update-article-seo.mjs",
+    "articles:expand-bodies": "node --env-file=.env scripts/update-article-bodies.mjs --all",
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "deploy": "bash scripts/deploy.sh"
   },
   "dependencies": {
     "@payloadcms/db-sqlite": "3.85.0",
