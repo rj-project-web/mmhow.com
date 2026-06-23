@@ -9,10 +9,9 @@ import { buildOrganizationJsonLd, buildWebSiteJsonLd } from '@/lib/seo/structure
 import { getSiteUrl } from '@/lib/site-url'
 import '@/styles/globals.css'
 
-// ISR: pages are cached and regenerated at most once per interval. Comments are
-// approval-gated (pending comments are never shown), so caching does not affect
-// comment UX; newly published articles/approved comments appear within the window.
-export const revalidate = 600
+// Render frontend pages per-request. Payload's data layer is queried at request
+// time; build-time prerendering of these pages is intentionally avoided.
+export const dynamic = 'force-dynamic'
 
 const sourceSans = Source_Sans_3({
   subsets: ['latin'],
