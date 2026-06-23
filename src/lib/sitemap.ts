@@ -54,8 +54,18 @@ function buildSitemapXml(entries: SitemapEntry[]) {
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`
 }
 
-async function fetchAllPublishedArticles(payload: Awaited<ReturnType<typeof getPayload>>) {
-  const articles: Array<{ slug: string; updatedAt?: string | null; publishedAt?: string | null }> = []
+type FetchedArticle = {
+  slug: string
+  title: string
+  categoryName: string | null
+  updatedAt?: string | null
+  publishedAt?: string | null
+}
+
+async function fetchAllPublishedArticles(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+): Promise<FetchedArticle[]> {
+  const articles: FetchedArticle[] = []
   let page = 1
   let hasNextPage = true
 
@@ -64,6 +74,7 @@ async function fetchAllPublishedArticles(payload: Awaited<ReturnType<typeof getP
       collection: 'articles',
       limit: 100,
       page,
+      depth: 1,
       sort: '-updatedAt',
       where: {
         _status: {
@@ -75,6 +86,11 @@ async function fetchAllPublishedArticles(payload: Awaited<ReturnType<typeof getP
     articles.push(
       ...result.docs.map((doc) => ({
         slug: doc.slug,
+        title: doc.title,
+        categoryName:
+          doc.category && typeof doc.category === 'object' && 'name' in doc.category
+            ? (doc.category.name as string)
+            : null,
         updatedAt: doc.updatedAt,
         publishedAt: doc.publishedAt,
       })),
@@ -85,6 +101,71 @@ async function fetchAllPublishedArticles(payload: Awaited<ReturnType<typeof getP
   }
 
   return articles
+}
+
+const AI_CRAWLERS = [
+  'GPTBot',
+  'OAI-SearchBot',
+  'ChatGPT-User',
+  'ClaudeBot',
+  'anthropic-ai',
+  'Claude-Web',
+  'PerplexityBot',
+  'Perplexity-User',
+  'Google-Extended',
+  'Applebot-Extended',
+  'CCBot',
+]
+
+function buildRobotsTxt(baseUrl: string) {
+  const lines: string[] = [
+    'User-agent: *',
+    'Allow: /',
+    '',
+    '# Block Next.js RSC prefetch URLs (duplicate of clean pages)',
+    'Disallow: /*_rsc=',
+    '',
+    '# AI assistants and answer engines are welcome to index public content',
+  ]
+
+  for (const bot of AI_CRAWLERS) {
+    lines.push(`User-agent: ${bot}`, 'Allow: /', 'Disallow: /*_rsc=', '')
+  }
+
+  lines.push(`Sitemap: ${baseUrl}/sitemap.xml`, '')
+  return lines.join('\n')
+}
+
+function buildLlmsTxt(
+  baseUrl: string,
+  categories: Array<{ name: string; slug: string; description?: string | null }>,
+  articles: FetchedArticle[],
+) {
+  const lines: string[] = [
+    '# MMHow',
+    '',
+    '> Practical, no-hype guides on how to make money — side hustles, online income, freelancing, e-commerce, and investing.',
+    '',
+    '## Main pages',
+    `- [MMHow home](${baseUrl}/): How to make money online with proven strategies`,
+    `- [All categories](${baseUrl}/categories): Browse every money-making topic`,
+    `- [About](${baseUrl}/about): What MMHow is and who it is for`,
+    '',
+  ]
+
+  for (const category of categories) {
+    const inCategory = articles.filter((a) => a.categoryName === category.name)
+    if (inCategory.length === 0) continue
+
+    lines.push(`## ${category.name}`)
+    if (category.description) lines.push(`${category.description}`, '')
+    for (const article of inCategory) {
+      lines.push(`- [${article.title}](${baseUrl}/articles/${article.slug})`)
+    }
+    lines.push('')
+  }
+
+  return lines.join('\n')
 }
 
 export async function fetchPublishedArticleSlugs(): Promise<string[]> {
@@ -159,11 +240,17 @@ export async function generateSitemap(): Promise<SitemapGenerateResult> {
   const rootDir = projectRoot()
   const sitemapPath = path.join(rootDir, 'public/sitemap.xml')
   const robotsPath = path.join(rootDir, 'public/robots.txt')
+  const llmsPath = path.join(rootDir, 'public/llms.txt')
 
   writeFileSync(sitemapPath, buildSitemapXml(entries), 'utf8')
+  writeFileSync(robotsPath, buildRobotsTxt(baseUrl), 'utf8')
   writeFileSync(
-    robotsPath,
-    `User-agent: *\nAllow: /\n\n# Block Next.js RSC prefetch URLs (duplicate of clean pages)\nDisallow: /*_rsc=\n\nSitemap: ${baseUrl}/sitemap.xml\n`,
+    llmsPath,
+    buildLlmsTxt(
+      baseUrl,
+      categories.map((c) => ({ name: c.name, slug: c.slug, description: c.description })),
+      articles,
+    ),
     'utf8',
   )
 
