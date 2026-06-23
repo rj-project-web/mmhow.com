@@ -12,8 +12,9 @@ type ArticleBody = {
   description?: string
   descriptionFormat?: 'markdown' | 'html' | 'plain'
   excerpt?: string
+  keyTakeaways?: Array<string | { point?: string }>
   featuredImage?: string
-  images?: Array<{ url: string; alt?: string; caption?: string }>
+  images?: Array<{ url: string; alt?: string; caption?: string; afterHeading?: string }>
   category?: string
   slug?: string
   status?: 'published' | 'draft'
@@ -22,6 +23,25 @@ type ArticleBody = {
   sourceTitle?: string
   sourcePlatform?: string
   skipSourceDedup?: boolean
+  publishedAt?: string
+}
+
+function normalizeKeyTakeaways(
+  input: ArticleBody['keyTakeaways'],
+): Array<{ point: string }> | undefined {
+  if (!Array.isArray(input)) return undefined
+
+  const points = input
+    .map((item) => {
+      if (typeof item === 'string') return item
+      if (item && typeof item === 'object' && typeof item.point === 'string') return item.point
+      return ''
+    })
+    .map((value) => value.trim())
+    .filter((value) => value.length > 0)
+    .map((point) => ({ point }))
+
+  return points.length > 0 ? points : undefined
 }
 
 async function upsertArticle(
@@ -181,16 +201,46 @@ export async function POST(request: Request) {
       description: body.description,
     })
 
+    let existingPublishedAt: string | undefined
+    const slugTrimmed = body.slug?.trim()
+    if (slugTrimmed) {
+      const { docs: existingDocs } = await payload.find({
+        collection: 'articles',
+        limit: 1,
+        where: { slug: { equals: slugTrimmed } },
+      })
+      const raw = existingDocs[0]?.publishedAt
+      if (raw) {
+        existingPublishedAt = new Date(raw).toISOString()
+      }
+    }
+
+    let publishedAt: string | undefined
+    if (status === 'published') {
+      if (body.publishedAt?.trim()) {
+        const parsed = new Date(body.publishedAt)
+        if (Number.isNaN(parsed.getTime())) {
+          throw new AgentValidationError('Field "publishedAt" must be a valid ISO date string.')
+        }
+        publishedAt = parsed.toISOString()
+      } else if (existingPublishedAt) {
+        publishedAt = existingPublishedAt
+      } else {
+        publishedAt = new Date().toISOString()
+      }
+    }
+
     const articleData = {
       title: body.title.trim(),
-      slug: body.slug?.trim() || undefined,
+      slug: slugTrimmed || undefined,
       excerpt: body.excerpt?.trim() || excerptFromDescription(body.description),
+      keyTakeaways: normalizeKeyTakeaways(body.keyTakeaways),
       content,
       featuredImage: toId(featuredImageId),
       category: toId(categoryId),
       topics: topicIds?.map((id) => toId(id) as number),
       _status: status as 'draft' | 'published',
-      publishedAt: status === 'published' ? new Date().toISOString() : undefined,
+      publishedAt,
       ...sourceFields,
     }
 
@@ -237,8 +287,13 @@ export async function GET() {
       description: 'string (required) — article body, markdown/html/plain',
       descriptionFormat: 'markdown | html | plain (default: markdown)',
       excerpt: 'string (optional) — list summary',
+      keyTakeaways:
+        'string[] or {point}[] (optional) — 3–5 concise top-of-article takeaways for SEO/AI Overviews',
       featuredImage: 'string (optional) — cover image URL',
-      images: 'array (optional) — [{ url, alt?, caption? }] appended to body',
+      images:
+        'array (optional) — [{ url, alt?, caption?, afterHeading? }]; afterHeading inserts at end of that markdown section; omit to append at bottom',
+      markdownImages:
+        'inline ![alt](url) in markdown description is downloaded and placed at that position',
       category: 'string (optional) — category slug',
       topics: 'string[] (optional) — topic slugs',
       slug: 'string (optional)',
@@ -247,6 +302,7 @@ export async function GET() {
       sourceTitle: 'string (optional) — original article title',
       sourcePlatform: 'string (optional) — e.g. 知乎 / 小红书 / 搜狐',
       skipSourceDedup: 'boolean (optional) — bypass duplicate check (admin only use)',
+      publishedAt: 'string (optional) — ISO datetime for publishedAt; batch scripts pass staggered times',
     },
     sourceMapping:
       'Stored in Payload Admin → Articles (sourceUrl, sourceTitle, sourcePlatform). Do NOT edit docs/source-mapping.xlsx.',
