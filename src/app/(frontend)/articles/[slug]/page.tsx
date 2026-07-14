@@ -175,7 +175,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
             <span>{formatDate(article.publishedAt)}</span>
           </div>
 
-          <h1 className="font-display-lg font-bold text-[26px] leading-tight tracking-tight text-on-surface md:text-[36px] md:leading-[1.15]">
+          <h1 className="font-display-lg font-semibold text-[26px] leading-tight tracking-tight text-on-surface md:text-[36px] md:leading-[1.15]">
             {article.title}
           </h1>
 
