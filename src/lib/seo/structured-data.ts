@@ -177,3 +177,23 @@ export function buildFaqJsonLd(entries: FaqEntry[]) {
     })),
   }
 }
+
+/** Static informational pages (About, Privacy, Terms). */
+export function buildWebPageJsonLd(input: {
+  name: string
+  url: string
+  description?: string
+  dateModified?: string
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: input.name,
+    url: input.url,
+    ...(input.description ? { description: input.description } : {}),
+    ...(input.dateModified ? { dateModified: input.dateModified } : {}),
+    isPartOf: { '@id': WEBSITE_ID },
+    publisher: { '@id': ORGANIZATION_ID },
+    inLanguage: 'en-US',
+  }
+}

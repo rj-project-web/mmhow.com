@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Lightbulb, TrendingUp } from 'lucide-react'
+import { Lightbulb, ShieldCheck, TrendingUp } from 'lucide-react'
 
 import {
   ArticlePickStrip,
@@ -12,10 +12,23 @@ import { CategoriesGrid } from '@/components/category/CategoriesGrid'
 import { toArticleSummary } from '@/lib/articles'
 import { getAllCategories } from '@/lib/categories'
 import { getPayloadClient } from '@/lib/payload'
+import { buildWebPageJsonLd } from '@/lib/seo/structured-data'
+import { absoluteUrl } from '@/lib/site-url'
+
+const PAGE_DESCRIPTION =
+  'Research-backed guides on side hustles, freelancing, e-commerce, content monetization, and index investing — practical playbooks with clear steps, realistic economics, and no get-rich-quick hype.'
 
 export const metadata: Metadata = {
+  title: 'How to Make Money — Side Hustles, Online Income & Investing',
+  description: PAGE_DESCRIPTION,
   alternates: {
     canonical: '/',
+  },
+  openGraph: {
+    title: 'MMHow — Real Ways to Earn More',
+    description: PAGE_DESCRIPTION,
+    url: '/',
+    type: 'website',
   },
 }
 
@@ -42,23 +55,35 @@ export default async function HomePage() {
   const editorPicks = summaries.slice(3, 6)
   const sidebarArticles = summaries.slice(0, 6)
 
+  const webPageJsonLd = buildWebPageJsonLd({
+    name: 'MMHow — How to Make Money',
+    url: absoluteUrl('/'),
+    description: PAGE_DESCRIPTION,
+    dateModified: '2026-07-14',
+  })
+
   return (
     <main className="mx-auto flex w-full max-w-container-max flex-grow flex-col gap-ad-clearance px-margin-mobile py-ad-clearance md:px-margin-desktop">
+      <script
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
+        type="application/ld+json"
+      />
       <section className="relative grid min-h-[560px] grid-cols-1 items-center gap-gutter overflow-hidden rounded-2xl bg-hero-subtle p-8 md:p-12 lg:grid-cols-12">
         <div className="relative z-10 flex flex-col gap-6 lg:col-span-7">
           <span className="inline-flex w-fit items-center rounded-full bg-blue-50 px-4 py-1.5 font-label-md text-label-md text-blue-600">
-            How to Make Money
+            Practical Money Guides
           </span>
           <h1 className="font-display-lg text-display-lg text-on-surface">
-            Real Ways to Earn More — Side Hustles, Online Income & Investing
+            Real Ways to Earn More — Side Hustles, Online Income &amp; Investing
           </h1>
           <p className="max-w-2xl font-body-lg text-body-lg leading-relaxed text-on-surface-variant">
-            Step-by-step playbooks to start earning today: freelancing, content monetization,
-            e-commerce, digital products, and building passive income streams that actually work.
+            Step-by-step playbooks backed by research and platform docs: freelancing, content
+            monetization, e-commerce, digital products, and disciplined index investing. We publish
+            for education — not hype.
           </p>
           <div className="flex flex-wrap gap-4 pt-4">
             <Link className="btn-cta" href="/categories">
-              Start Making Money
+              Browse Categories
             </Link>
             <Link
               className="btn-cta-secondary"
@@ -80,6 +105,37 @@ export default async function HomePage() {
               unoptimized
             />
           </div>
+        </div>
+      </section>
+
+      <section className="card-fintech grid gap-6 p-8 md:grid-cols-3 md:p-10">
+        <div className="flex flex-col gap-3">
+          <ShieldCheck className="h-8 w-8 text-primary" aria-hidden />
+          <h2 className="font-headline-md text-headline-md text-on-surface">Editorial standards</h2>
+          <p className="font-body-md text-body-md text-on-surface-variant">
+            Every guide includes actionable steps, realistic economics, and clear limits. We avoid
+            guaranteed-income claims and label illustrative figures.
+          </p>
+        </div>
+        <div className="flex flex-col gap-3">
+          <TrendingUp className="h-8 w-8 text-primary" aria-hidden />
+          <h2 className="font-headline-md text-headline-md text-on-surface">Regularly reviewed</h2>
+          <p className="font-body-md text-body-md text-on-surface-variant">
+            Articles are refreshed on a rolling schedule — platform rules, fees, and internal links
+            stay current while URLs remain stable.
+          </p>
+        </div>
+        <div className="flex flex-col gap-3">
+          <Lightbulb className="h-8 w-8 text-primary" aria-hidden />
+          <h2 className="font-headline-md text-headline-md text-on-surface">Not financial advice</h2>
+          <p className="font-body-md text-body-md text-on-surface-variant">
+            MMHow is educational content only. Consult licensed professionals for tax, legal, or
+            investment decisions. See our{' '}
+            <Link className="text-primary underline" href="/about">
+              About
+            </Link>{' '}
+            page.
+          </p>
         </div>
       </section>
 
@@ -117,72 +173,36 @@ export default async function HomePage() {
           )}
 
           {secondary.length > 0 ? (
-            secondary.map((article, index) => (
+            secondary.map((article) => (
               <ArticleCard
                 key={article.id}
                 categoryName={
                   article.category && typeof article.category === 'object'
                     ? article.category.name
-                    : index === 0
-                      ? 'Investment'
-                      : 'Side Hustles'
+                    : null
                 }
                 slug={article.slug}
                 title={article.title}
                 variant="compact"
               />
             ))
-          ) : (
-            <>
-              <div className="card-fintech flex flex-col justify-between p-6">
-                <TrendingUp className="mb-4 h-8 w-8 text-primary" />
-                <div>
-                  <span className="mb-1 block font-label-md text-label-md text-on-surface-variant">
-                    Investment
-                  </span>
-                  <h4 className="font-headline-md text-body-lg font-semibold text-on-surface">
-                    Index Funds vs. Real Estate in 2024
-                  </h4>
-                </div>
-              </div>
-              <div className="card-fintech flex flex-col justify-between p-6">
-                <Lightbulb className="mb-4 h-8 w-8 text-emerald-500" />
-                <div>
-                  <span className="mb-1 block font-label-md text-label-md text-on-surface-variant">
-                    Side Hustles
-                  </span>
-                  <h4 className="font-headline-md text-body-lg font-semibold text-on-surface">
-                    High-Yield Digital Products
-                  </h4>
-                </div>
-              </div>
-            </>
-          )}
+          ) : null}
         </div>
       </section>
 
       <section className="mt-12 grid grid-cols-1 gap-gutter lg:grid-cols-12">
         <div className="flex flex-col gap-8 lg:col-span-8">
-          <div className="card-fintech flex flex-col items-center gap-8 p-10 md:flex-row">
-            <div className="flex-1">
-              <h3 className="mb-4 font-headline-md text-headline-md text-on-surface">
-                Money Moves Newsletter
-              </h3>
-              <p className="mb-6 font-body-md text-body-md text-on-surface-variant">
-                Weekly income ideas, side hustle breakdowns, and investing tips — straight to your
-                inbox.
-              </p>
-              <form className="flex w-full max-w-md gap-2">
-                <input
-                  className="flex-1 rounded-xl border border-outline bg-white px-4 py-3 font-body-md text-body-md focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                  placeholder="Enter your email"
-                  type="email"
-                />
-                <button className="btn-cta-sm shrink-0" type="button">
-                  Subscribe
-                </button>
-              </form>
-            </div>
+          <div className="card-fintech flex flex-col gap-4 p-10">
+            <h3 className="font-headline-md text-headline-md text-on-surface">
+              Start with a category that fits your skills
+            </h3>
+            <p className="max-w-2xl font-body-md text-body-md text-on-surface-variant">
+              Pick one lane for 30–60 days — freelancing, content, e-commerce, or investing basics —
+              then follow the playbooks inside. Depth beats chasing every trend.
+            </p>
+            <Link className="btn-cta-sm w-fit" href="/categories">
+              View all categories
+            </Link>
           </div>
 
           <div className="flex flex-col gap-4">
