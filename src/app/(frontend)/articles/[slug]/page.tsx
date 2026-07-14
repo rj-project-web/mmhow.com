@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation'
 import { ArticleContent } from '@/components/article/ArticleContent'
 import { InvestmentDisclaimer } from '@/components/article/InvestmentDisclaimer'
 import { KeyTakeaways } from '@/components/article/KeyTakeaways'
+import { ReadingProgress } from '@/components/article/ReadingProgress'
 import {
   ArticleSidebar,
   ContinueReading,
@@ -141,8 +142,11 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
   const showInvestmentDisclaimer = categorySlug === 'investment--passive-income'
 
+  const nextArticle = relatedInCategory[0] ?? moreToRead[0]
+
   return (
-    <main className="mx-auto flex w-full max-w-container-max flex-grow flex-col gap-ad-clearance px-margin-mobile py-ad-clearance md:px-margin-desktop">
+    <main className="article-reading mx-auto flex w-full max-w-container-max flex-grow flex-col gap-12 px-5 py-12 md:gap-12 md:px-margin-desktop">
+      <ReadingProgress />
       <script
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         type="application/ld+json"
@@ -161,9 +165,12 @@ export default async function ArticleDetailPage({ params }: PageProps) {
         <div className="flex flex-col gap-6 lg:col-span-8">
           <div className="flex flex-wrap items-center gap-3 font-label-md text-label-md text-on-surface-variant">
             {article.category && typeof article.category === 'object' && (
-              <Link className="text-primary hover:text-blue-700" href={`/category/${article.category.slug}`}>
-                {article.category.name}
-              </Link>
+              <>
+                <Link className="text-primary hover:text-blue-700" href={`/category/${article.category.slug}`}>
+                  {article.category.name}
+                </Link>
+                <span aria-hidden className="h-1 w-1 rounded-full bg-slate-300" />
+              </>
             )}
             <span>{formatDate(article.publishedAt)}</span>
           </div>
@@ -230,6 +237,23 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           <ArticleSidebar articles={moreToRead} title="Related Guides" />
         </div>
       </article>
+
+      {nextArticle && (
+        <div className="sticky bottom-0 z-40 mt-2 flex w-full items-center justify-between border-t border-outline bg-white px-5 py-4 md:hidden">
+          <div className="flex min-w-0 flex-col">
+            <span className="font-label-md text-[10px] text-primary">Next Guide</span>
+            <span className="max-w-[200px] truncate text-sm font-semibold text-on-surface">
+              {nextArticle.title}
+            </span>
+          </div>
+          <Link
+            className="btn-cta-sm px-4 py-2 text-xs"
+            href={`/articles/${nextArticle.slug}`}
+          >
+            Read Now →
+          </Link>
+        </div>
+      )}
     </main>
   )
 }
