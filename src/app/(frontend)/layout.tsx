@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Source_Sans_3, Source_Serif_4 } from 'next/font/google'
 import React from 'react'
 
 import { SiteFooter } from '@/components/layout/SiteFooter'
@@ -12,16 +11,6 @@ import '@/styles/globals.css'
 // Render frontend pages per-request. Payload's data layer is queried at request
 // time; build-time prerendering of these pages is intentionally avoided.
 export const dynamic = 'force-dynamic'
-
-const sourceSans = Source_Sans_3({
-  subsets: ['latin'],
-  variable: '--font-source-sans',
-})
-
-const sourceSerif = Source_Serif_4({
-  subsets: ['latin'],
-  variable: '--font-source-serif',
-})
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -63,7 +52,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <html className={`${sourceSans.variable} ${sourceSerif.variable}`} lang="en">
+    <html lang="en">
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"

@@ -69,31 +69,9 @@
 
 /*
  * Article reading experience — scoped to article detail pages.
- * Switches the reading column to Verdana (tuned on superdesign for long-form
- * legibility) and bumps body sizes for mobile-first reading comfort. Does NOT
- * affect the rest of the site (home, listings, header, footer).
+ * Bumps body sizes for mobile-first reading comfort. Font family is Verdana
+ * globally (see tailwind.config.ts); this only enlarges reading text.
  */
-.article-reading,
-.article-reading .font-display-lg,
-.article-reading .font-headline-lg-mobile,
-.article-reading .font-headline-lg,
-.article-reading .font-headline-md,
-.article-reading .font-body-lg,
-.article-reading .font-body-md,
-.article-reading .font-label-md,
-.article-reading .prose-money,
-.article-reading .prose-money h1,
-.article-reading .prose-money h2,
-.article-reading .prose-money h3,
-.article-reading .prose-money h4,
-.article-reading .prose-money p,
-.article-reading .prose-money li,
-.article-reading .prose-money strong,
-.article-reading .prose-money td,
-.article-reading .prose-money th {
-  font-family: Verdana, Geneva, 'DejaVu Sans', sans-serif;
-}
-
 .article-reading .text-body-md {
   font-size: 18px;
   line-height: 1.7;
