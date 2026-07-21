@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
+import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { getAllCategories } from '@/lib/categories'
@@ -67,6 +68,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <SiteHeader categories={categories} />
         {children}
         <SiteFooter categories={categories} />
+        <GoogleAnalytics />
       </body>
     </html>
   )
