@@ -190,6 +190,39 @@ Content-Type: application/json
 - 改源站信息 → 同篇文章侧栏的源站字段  
 - **不要** 打开或提交 `source-mapping.xlsx` 的变更  
 
+### 定期刷新（URL 不变）
+
+已发布文章需**滚动更新正文**时，遵循 **[content-refresh-plan.md](./content-refresh-plan.md)**：
+
+- **禁止改 `slug`** — URL 永久不变  
+- 用 `PATCH /api/articles/:id` 更新 `description`、`excerpt`、`keyTakeaways`  
+- 正文末可加 `## Last reviewed` 段说明核实日期  
+- 导出队列：`npm run content:refresh-queue` → `scripts/content-refresh-queue.json`  
+- 建议节奏：**10 篇/周**（8×L1 + 2×L2），约 29 周覆盖 284 篇一轮  
+
+---
+
+## 404 幽灵 URL（蜘蛛已发现，必读）
+
+内容 Agent 曾在正文中生成指向**从未发布** slug 的内链（见 `docs/unique-404-urls.txt`，共 101 条）。Google 等蜘蛛可能已抓取这些 URL。
+
+### 规则（硬性）
+
+| 场景 | 正确做法 | 禁止 |
+|------|----------|------|
+| 修复 `docs/unique-404-urls.txt` 中的 404 | 在 `scripts/lib/404-redirect-overrides.mjs` 映射到**已发布**文章 slug → `npm run redirects:404-map` → 部署 | 在 404 slug 上 `POST /api/agent/articles` 新建页面 |
+| 正文站内内链 | 只链到 **sitemap.xml 中已存在** 的 `/articles/{slug}` | 链到未发布、臆造的 slug |
+| 新选题发文 | 正常创建**新** slug（见上方标准工作流） | 把 404 清单里的 slug 当作新文目标 |
+
+### 工作流
+
+1. 查映射：`docs/404-url-redirect-mapping.csv`（`ghost_slug` → `canonical_slug`）
+2. 改映射：编辑 `scripts/lib/404-redirect-overrides.mjs`（101 条，目标须在 sitemap 存在）
+3. 重新生成：`npm run redirects:404-map` → 更新 `scripts/404-redirects.generated.mjs`
+4. 部署：`npm run deploy`（`next.config.ts` 读取 `scripts/404-redirects.mjs` 输出 301）
+
+完整说明：[docs/404-url-redirect-plan.md](./404-url-redirect-plan.md)
+
 ---
 
 ## 排重逻辑
@@ -226,9 +259,11 @@ curl https://www.mmhow.com/api/agent/categories \
 6. 每篇手写 excerpt（120–155 字，含 Keyword）、传 keyTakeaways[]（3–5 条英文要点）并传 topics[]（1–2 个 slug）
 7. 正文含 2–3 条站内内链；配图按文章主题选图
 8. 使用 POST https://www.mmhow.com/api/agent/articles，category 传 slug
-9. 发前先 GET /api/agent/categories 确认分类
-10. 整批完成后 npm run sitemap:check
-11. 遇 409 表示源站重复，换选题或检查是否已发布
+9. 站内内链只指向 sitemap 已存在的 slug；禁止链向 docs/unique-404-urls.txt 中的幽灵 URL
+10. 修复蜘蛛已发现的 404：用 301 重定向到已发布文章，禁止在 404 slug 上新建文章（见 docs/404-url-redirect-plan.md）
+11. 发前先 GET /api/agent/categories 确认分类
+12. 整批完成后 npm run sitemap:check
+13. 遇 409 表示源站重复，换选题或检查是否已发布
 
 源站字段保存在文章侧栏：源平台、原网址、原标题、内容指纹（自动）。
 ```

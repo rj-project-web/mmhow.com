@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 /**
- * Generate topic/category/keyword mapping for 404 URLs.
+ * @deprecated 原用于为 404 URL 生成「新文」映射；已废止。
+ * 404 修复请维护 scripts/lib/404-redirect-overrides.mjs 并运行 npm run redirects:404-map
  *
- * Reads docs/unique-404-urls.txt and docs/keyword-search-sheet.csv,
- * outputs docs/404-url-content-mapping.csv with suggested:
- * - url, slug, topic, category_slug, topic_slugs, primary_keyword, secondary_keywords, chinese_search_query
+ * Generate topic/category/keyword mapping for 404 URLs (legacy).
  */
 
 import fs from 'node:fs/promises'
