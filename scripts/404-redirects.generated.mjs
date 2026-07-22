@@ -86,6 +86,16 @@ export const GHOST_404_REDIRECTS = [
     "permanent": true
   },
   {
+    "source": "/articles/eight-wfh-hustles-evening-service-blocks",
+    "destination": "/articles/evening-service-blocks-good-side-hustles-from-home",
+    "permanent": true
+  },
+  {
+    "source": "/articles/eight-wfh-hustles-evening-stack",
+    "destination": "/articles/wfh-evening-hustle-stack-from-home",
+    "permanent": true
+  },
+  {
     "source": "/articles/earn-and-make-money-student-fiction-evening-blocks",
     "destination": "/articles/earn-and-make-money-ai-fiction-sprint-students",
     "permanent": true
@@ -123,16 +133,6 @@ export const GHOST_404_REDIRECTS = [
   {
     "source": "/articles/earn-more-income-red-note-commerce-spine",
     "destination": "/articles/earn-more-income-red-note-matrix-factory",
-    "permanent": true
-  },
-  {
-    "source": "/articles/eight-wfh-hustles-evening-service-blocks",
-    "destination": "/articles/eight-zero-barrier-side-hustles-from-home-2025",
-    "permanent": true
-  },
-  {
-    "source": "/articles/eight-wfh-hustles-evening-stack",
-    "destination": "/articles/eight-zero-barrier-side-hustles-from-home-2025",
     "permanent": true
   },
   {
@@ -486,12 +486,12 @@ export const GHOST_404_REDIRECTS = [
     "permanent": true
   },
   {
-    "source": "/articles/work-from-home-money-earning-caps-evening",
-    "destination": "/articles/eight-zero-barrier-side-hustles-from-home-2025",
+    "source": "/articles/work-from-home-money-earning-evening-blocks",
+    "destination": "/articles/work-from-home-evening-money-blocks-guide",
     "permanent": true
   },
   {
-    "source": "/articles/work-from-home-money-earning-evening-blocks",
+    "source": "/articles/work-from-home-money-earning-caps-evening",
     "destination": "/articles/eight-zero-barrier-side-hustles-from-home-2025",
     "permanent": true
   },
